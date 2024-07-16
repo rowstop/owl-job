@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Setter
 @ToString
 @Accessors(chain = true)
-public class TimedConfig {
+public class OwlJobConfig {
 
     /**
      * 定时任务命名空间

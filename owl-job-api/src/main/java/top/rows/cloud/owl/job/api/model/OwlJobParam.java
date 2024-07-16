@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Accessors(chain = true)
-public class TimeJobParam<T> {
+public class OwlJobParam<T> {
 
     /**
      * 任务参数数据

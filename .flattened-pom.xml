@@ -9,15 +9,26 @@
   <modules>
     <module>owl-job-api</module>
     <module>owl-job-core</module>
+    <module>owl-job-spring-boot-starter</module>
   </modules>
   <properties>
+    <owl.version>1.0.0</owl.version>
+    <slf4j.version>1.7.36</slf4j.version>
+    <redisson.version>3.16.7</redisson.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>8</maven.compiler.source>
     <lombok.version>1.18.32</lombok.version>
     <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
-    <maven.compiler.source>8</maven.compiler.source>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <owl.version>1.0.0</owl.version>
-    <redisson.version>3.24.3</redisson.version>
   </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>5.9.3</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <dependency>
       <groupId>org.projectlombok</groupId>

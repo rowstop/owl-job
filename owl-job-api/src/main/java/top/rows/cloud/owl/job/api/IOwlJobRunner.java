@@ -1,18 +1,18 @@
 package top.rows.cloud.owl.job.api;
 
 
-import top.rows.cloud.owl.job.api.model.TimeJobParam;
+import top.rows.cloud.owl.job.api.model.OwlJobParam;
 
 /**
  * @author 张治保
  * @since 2024/7/11
  */
 @FunctionalInterface
-public interface ITimedJobRunner<T> {
+public interface IOwlJobRunner<T> {
     /**
      * 执行定时任务
      *
      * @param param 任务参数
      */
-    void run(TimeJobParam<T> param);
+    void run(OwlJobParam<T> param);
 }

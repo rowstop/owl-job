@@ -2,13 +2,13 @@ package top.rows.cloud.owl.job.core;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import top.rows.cloud.owl.job.api.ITimedJobExecutor;
-import top.rows.cloud.owl.job.api.ITimedJobListener;
-import top.rows.cloud.owl.job.api.ITimedJobRunner;
-import top.rows.cloud.owl.job.api.ITimedJobTemplate;
-import top.rows.cloud.owl.job.api.model.TimeJobParam;
-import top.rows.cloud.owl.job.api.model.TimedJob;
-import top.rows.cloud.owl.job.core.config.TimedConfig;
+import top.rows.cloud.owl.job.api.IOwlJobExecutor;
+import top.rows.cloud.owl.job.api.IOwlJobListener;
+import top.rows.cloud.owl.job.api.IOwlJobRunner;
+import top.rows.cloud.owl.job.api.IOwlJobTemplate;
+import top.rows.cloud.owl.job.api.model.OwlJobParam;
+import top.rows.cloud.owl.job.api.model.OwlJob;
+import top.rows.cloud.owl.job.core.config.OwlJobConfig;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutorService;
  * @since 2024/6/29
  */
 @Slf4j
-public class TimedJobExecutor implements ITimedJobExecutor {
+public class OwlJobExecutor implements IOwlJobExecutor {
     /**
      * 执行任务的线程池
      */
@@ -41,28 +41,28 @@ public class TimedJobExecutor implements ITimedJobExecutor {
     /**
      * 任务组及对应监听器 map
      */
-    private final Map<String, ITimedJobRunner<?>> groupListenerMap = new HashMap<>();
+    private final Map<String, IOwlJobRunner<?>> groupListenerMap = new HashMap<>();
 
-    public TimedJobExecutor(TimedConfig config) {
+    public OwlJobExecutor(OwlJobConfig config) {
         this.executor = config.getExecutorThreadPool().toExecutorService();
         this.maxFailRetry = config.getRetryAttempts();
         this.retryInterval = config.getRetryInterval().toMillis();
     }
 
     @Override
-    public final <T> TimedJobExecutor addListener(@NonNull String group, @NonNull ITimedJobRunner<T> runner) {
+    public final <T> OwlJobExecutor addListener(@NonNull String group, @NonNull IOwlJobRunner<T> runner) {
         groupListenerMap.put(group, runner);
         return this;
     }
 
     @Override
-    public final <T> ITimedJobExecutor addListener(@NonNull ITimedJobListener<T> listener) {
+    public final <T> IOwlJobExecutor addListener(@NonNull IOwlJobListener<T> listener) {
         groupListenerMap.put(listener.group(), listener);
         return this;
     }
 
     @Override
-    public final TimedJobExecutor removeListener(@NonNull String group) {
+    public final OwlJobExecutor removeListener(@NonNull String group) {
         groupListenerMap.remove(group);
         return this;
     }
@@ -75,12 +75,12 @@ public class TimedJobExecutor implements ITimedJobExecutor {
      * @param <T>      任务数据类型
      */
     @Override
-    public final <T> void execAsync(ITimedJobTemplate template, String router, TimedJob<T> job) {
+    public final <T> void execAsync(IOwlJobTemplate template, String router, OwlJob<T> job) {
         executor.execute(() -> execTask(false, template, router, job));
     }
 
     @Override
-    public <T> CompletableFuture<Void> execAsyncFuture(ITimedJobTemplate template, String router, TimedJob<T> job) {
+    public <T> CompletableFuture<Void> execAsyncFuture(IOwlJobTemplate template, String router, OwlJob<T> job) {
         return CompletableFuture.runAsync(
                 () -> execTask(false, template, router, job),
                 executor
@@ -95,10 +95,10 @@ public class TimedJobExecutor implements ITimedJobExecutor {
         executor.shutdown();
     }
 
-    private <T> void execTask(boolean skipRepeat, ITimedJobTemplate template, String router, TimedJob<T> job) {
+    private <T> void execTask(boolean skipRepeat, IOwlJobTemplate template, String router, OwlJob<T> job) {
         String[] groupAndTaskId = OwlJobHelper.groupAndTaskIdFromRouter(router);
         String group = groupAndTaskId[0];
-        ITimedJobRunner<?> runner = groupListenerMap.get(group);
+        IOwlJobRunner<?> runner = groupListenerMap.get(group);
         if (runner == null) {
             log.warn("done not have job runner for group:{}", group);
             return;
@@ -162,9 +162,9 @@ public class TimedJobExecutor implements ITimedJobExecutor {
      * @param <T>    人数参数类型
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private <T> void run(ITimedJobRunner<?> runner, TimedJob<T> job) {
+    private <T> void run(IOwlJobRunner<?> runner, OwlJob<T> job) {
         runner.run(
-                new TimeJobParam()
+                new OwlJobParam()
                         .setTime(job.getTime())
                         .setParam(job.getParam())
         );

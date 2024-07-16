@@ -7,10 +7,10 @@ import org.redisson.api.RBlockingQueue;
 import org.redisson.api.RDelayedQueue;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
-import top.rows.cloud.owl.job.api.ITimedJobExecutor;
-import top.rows.cloud.owl.job.api.ITimedJobTemplate;
-import top.rows.cloud.owl.job.api.model.TimedJob;
-import top.rows.cloud.owl.job.core.config.TimedConfig;
+import top.rows.cloud.owl.job.api.IOwlJobExecutor;
+import top.rows.cloud.owl.job.api.IOwlJobTemplate;
+import top.rows.cloud.owl.job.api.model.OwlJob;
+import top.rows.cloud.owl.job.core.config.OwlJobConfig;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -24,7 +24,7 @@ import java.util.function.Supplier;
  * @since 2024/6/29
  */
 @Slf4j
-public class TimedJobTemplate implements ITimedJobTemplate {
+public class OwlJobTemplate implements IOwlJobTemplate {
 
     /**
      * 队列缓存 key前缀
@@ -39,8 +39,8 @@ public class TimedJobTemplate implements ITimedJobTemplate {
     private final RedissonClient redissonClient;
     private final RBlockingQueue<String> blockingQueue;
     private final RDelayedQueue<String> delayedQueue;
-    private final ITimedJobExecutor jobExecutor;
-    private final RMap<String, TimedJob<Object>> jobConfigRMap;
+    private final IOwlJobExecutor jobExecutor;
+    private final RMap<String, OwlJob<Object>> jobConfigRMap;
     private final long execCorrectionMills;
 
     /**
@@ -58,7 +58,7 @@ public class TimedJobTemplate implements ITimedJobTemplate {
      * @param redissonClient redisson 客户端
      * @param executor       定时任务执行器
      */
-    public TimedJobTemplate(TimedConfig config, RedissonClient redissonClient, ITimedJobExecutor executor) {
+    public OwlJobTemplate(OwlJobConfig config, RedissonClient redissonClient, IOwlJobExecutor executor) {
         //获取全局命名空间
         @NonNull String namespace = config.getNamespace();
         this.redissonClient = redissonClient;
@@ -69,7 +69,7 @@ public class TimedJobTemplate implements ITimedJobTemplate {
         this.execCorrectionMills = config.getExecCorrectionMills();
     }
 
-    private static <T> String taskId(@NonNull TimedJob<T> job) {
+    private static <T> String taskId(@NonNull OwlJob<T> job) {
         Supplier<String> idGenerator = job.getIdGenerator();
         return idGenerator == null ? UUID.randomUUID().toString() : idGenerator.get();
     }
@@ -95,10 +95,10 @@ public class TimedJobTemplate implements ITimedJobTemplate {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public final <T> String add(@NonNull String group, @NonNull TimedJob<T> job) {
+    public final <T> String add(@NonNull String group, @NonNull OwlJob<T> job) {
         String taskId = taskId(job);
         String router = OwlJobHelper.router(group, taskId);
-        jobConfigRMap.put(router, (TimedJob<Object>) job);
+        jobConfigRMap.put(router, (OwlJob<Object>) job);
         delayedQueue.offer(
                 router,
                 toDelayMills(job.getTime()),
@@ -113,7 +113,7 @@ public class TimedJobTemplate implements ITimedJobTemplate {
      * @param id 任务id
      */
     @Override
-    public final TimedJob<Object> remove(@NonNull String group, @NonNull String id) {
+    public final OwlJob<Object> remove(@NonNull String group, @NonNull String id) {
         String router = OwlJobHelper.router(group, id);
         delayedQueue.remove(router);
         return jobConfigRMap.remove(router);
@@ -127,10 +127,10 @@ public class TimedJobTemplate implements ITimedJobTemplate {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public final <T> CompletionStage<String> addAsync(@NonNull String group, @NonNull TimedJob<T> job) {
+    public final <T> CompletionStage<String> addAsync(@NonNull String group, @NonNull OwlJob<T> job) {
         String taskId = taskId(job);
         String router = OwlJobHelper.router(group, taskId);
-        return jobConfigRMap.putAsync(router, (TimedJob<Object>) job)
+        return jobConfigRMap.putAsync(router, (OwlJob<Object>) job)
                 .thenApply(
                         (_pre) -> {
                             delayedQueue.offer(
@@ -150,7 +150,7 @@ public class TimedJobTemplate implements ITimedJobTemplate {
      * @return 异步处理结果
      */
     @Override
-    public final CompletionStage<TimedJob<Object>> removeAsync(@NonNull String group, @NonNull String id) {
+    public final CompletionStage<OwlJob<Object>> removeAsync(@NonNull String group, @NonNull String id) {
         String router = OwlJobHelper.router(group, id);
         return delayedQueue.removeAsync(router)
                 .thenApply((_v) -> jobConfigRMap.remove(router));
@@ -181,7 +181,7 @@ public class TimedJobTemplate implements ITimedJobTemplate {
                 }
                 //已获取到任务
                 //获取任务详情并删除原数据
-                TimedJob<Object> job = jobConfigRMap.remove(router);
+                OwlJob<Object> job = jobConfigRMap.remove(router);
                 if (job == null) {
                     continue;
                 }

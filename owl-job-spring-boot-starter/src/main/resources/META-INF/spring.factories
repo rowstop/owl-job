@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  top.rows.cloud.owl.job.spring.OwlJobAutoconfigure

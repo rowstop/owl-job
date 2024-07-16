@@ -2,7 +2,7 @@ package top.rows.cloud.owl.job.api;
 
 
 import lombok.NonNull;
-import top.rows.cloud.owl.job.api.model.TimedJob;
+import top.rows.cloud.owl.job.api.model.OwlJob;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
  * @author 张治保
  * @since 2024/7/1
  */
-public interface ITimedJobExecutor {
+public interface IOwlJobExecutor {
     /**
      * 添加任务监听器
      *
@@ -20,7 +20,7 @@ public interface ITimedJobExecutor {
      * @param runner 任务监听器
      * @return this
      */
-    <T> ITimedJobExecutor addListener(@NonNull String group, @NonNull ITimedJobRunner<T> runner);
+    <T> IOwlJobExecutor addListener(@NonNull String group, @NonNull IOwlJobRunner<T> runner);
 
     /**
      * 添加任务监听器
@@ -28,7 +28,7 @@ public interface ITimedJobExecutor {
      * @param listener 任务监听器
      * @return this
      */
-    <T> ITimedJobExecutor addListener(@NonNull ITimedJobListener<T> listener);
+    <T> IOwlJobExecutor addListener(@NonNull IOwlJobListener<T> listener);
 
     /**
      * 删除任务监听起
@@ -36,7 +36,7 @@ public interface ITimedJobExecutor {
      * @param group 任务名称
      * @return this
      */
-    ITimedJobExecutor removeListener(@NonNull String group);
+    IOwlJobExecutor removeListener(@NonNull String group);
 
     /**
      * 同步执行任务
@@ -46,7 +46,7 @@ public interface ITimedJobExecutor {
      * @param job      任务配置
      * @param <T>      任务数据类型
      */
-    <T> void execAsync(ITimedJobTemplate template, String router, TimedJob<T> job);
+    <T> void execAsync(IOwlJobTemplate template, String router, OwlJob<T> job);
 
     /**
      * 异步执行任务
@@ -56,7 +56,7 @@ public interface ITimedJobExecutor {
      * @param job      任务配置
      * @param <T>      任务数据类型
      */
-    <T> CompletableFuture<Void> execAsyncFuture(ITimedJobTemplate template, String router, TimedJob<T> job);
+    <T> CompletableFuture<Void> execAsyncFuture(IOwlJobTemplate template, String router, OwlJob<T> job);
 
     /**
      * 关闭执行器

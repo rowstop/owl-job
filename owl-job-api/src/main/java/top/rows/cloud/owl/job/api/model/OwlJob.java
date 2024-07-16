@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 @ToString
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Accessors(chain = true)
-public class TimedJob<T> implements Serializable {
+public class OwlJob<T> implements Serializable {
 
     /**
      * （首次）执行时间
@@ -50,8 +50,8 @@ public class TimedJob<T> implements Serializable {
      *             eg. orderNo
      * @return TimedJobConfig
      */
-    public static <T> TimedJob<T> of(@NonNull LocalDateTime time) {
-        TimedJob<T> config = new TimedJob<>();
+    public static <T> OwlJob<T> of(@NonNull LocalDateTime time) {
+        OwlJob<T> config = new OwlJob<>();
         config.setTime(time);
         return config;
     }
@@ -66,8 +66,8 @@ public class TimedJob<T> implements Serializable {
      * @param next 下次执行时间
      * @return 副本
      */
-    public final TimedJob<Object> copyToRepeat(LocalDateTime next) {
-        return TimedJob.of(next)
+    public final OwlJob<Object> copyToRepeat(LocalDateTime next) {
+        return OwlJob.of(next)
                 .setParam(getParam())
                 .setRepeatNanos(getRepeatNanos());
     }

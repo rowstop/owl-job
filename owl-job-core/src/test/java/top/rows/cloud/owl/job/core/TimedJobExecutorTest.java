@@ -4,9 +4,9 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import top.rows.cloud.owl.job.api.ITimedJobExecutor;
-import top.rows.cloud.owl.job.api.model.TimedJob;
-import top.rows.cloud.owl.job.core.config.TimedConfig;
+import top.rows.cloud.owl.job.api.IOwlJobExecutor;
+import top.rows.cloud.owl.job.api.model.OwlJob;
+import top.rows.cloud.owl.job.core.config.OwlJobConfig;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.ExecutionException;
@@ -18,11 +18,11 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class TimedJobExecutorTest {
 
-    private static ITimedJobExecutor jobExecutor;
+    private static IOwlJobExecutor jobExecutor;
 
     @BeforeAll
     static void init() {
-        jobExecutor = new TimedJobExecutor(new TimedConfig());
+        jobExecutor = new OwlJobExecutor(new OwlJobConfig());
     }
 
     @AfterAll
@@ -48,7 +48,7 @@ public class TimedJobExecutorTest {
         jobExecutor.execAsyncFuture(
                 null,
                 OwlJobHelper.router(taskGroup, taskId),
-                TimedJob.of(LocalDateTime.now())
+                OwlJob.of(LocalDateTime.now())
                         .setParam(param)
         ).get();
         Assertions.assertEquals(param, paramBox.get());

@@ -1,7 +1,7 @@
 package top.rows.cloud.owl.job.api;
 
 
-import top.rows.cloud.owl.job.api.model.TimedJob;
+import top.rows.cloud.owl.job.api.model.OwlJob;
 
 import java.util.concurrent.CompletionStage;
 
@@ -9,7 +9,7 @@ import java.util.concurrent.CompletionStage;
  * @author 张治保
  * @since 2024/7/1
  */
-public interface ITimedJobTemplate {
+public interface IOwlJobTemplate {
 
     /**
      * 添加定时任务
@@ -19,7 +19,7 @@ public interface ITimedJobTemplate {
      * @param <T>   定时任务参数
      * @return 任务 id
      */
-    <T> String add(String group, TimedJob<T> job);
+    <T> String add(String group, OwlJob<T> job);
 
     /**
      * 移除定时任务
@@ -28,7 +28,7 @@ public interface ITimedJobTemplate {
      * @param id    任务 id 自行定义的任务 key
      * @return 定时任务配置
      */
-    TimedJob<Object> remove(String group, String id);
+    OwlJob<Object> remove(String group, String id);
 
     /**
      * 异步添加定时任务
@@ -37,7 +37,7 @@ public interface ITimedJobTemplate {
      * @param job   定时任务配置
      * @return 异步任务 id
      */
-    <T> CompletionStage<String> addAsync(String group, TimedJob<T> job);
+    <T> CompletionStage<String> addAsync(String group, OwlJob<T> job);
 
     /**
      * 异步移除定时任务
@@ -46,7 +46,7 @@ public interface ITimedJobTemplate {
      * @param id    任务 id 自行定义的任务 key
      * @return 异步处理结果
      */
-    CompletionStage<TimedJob<Object>> removeAsync(String group, String id);
+    CompletionStage<OwlJob<Object>> removeAsync(String group, String id);
 
     /**
      * 开启任务处理
