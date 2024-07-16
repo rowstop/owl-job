@@ -34,7 +34,7 @@ public class OwlJobAutoconfigure {
     @ConditionalOnMissingBean
     public IOwlJobExecutor timedJobExecutor(@Nullable List<IOwlJobListener<?>> listeners) {
         IOwlJobExecutor executor = new OwlJobExecutor(timedJobProperties.getConfig());
-        if (listeners == null || listeners.isEmpty()){
+        if (listeners == null || listeners.isEmpty()) {
             return executor;
         }
         for (IOwlJobListener<?> listener : listeners) {
@@ -43,7 +43,7 @@ public class OwlJobAutoconfigure {
         return executor;
     }
 
-    @Bean(initMethod = "init",destroyMethod = "shutdown")
+    @Bean(initMethod = "init", destroyMethod = "shutdown")
     @ConditionalOnMissingBean
     public IOwlJobTemplate timedJobTemplate(RedissonClient redissonClient, IOwlJobExecutor timedJobExecutor) {
         return new OwlJobTemplate(

@@ -18,8 +18,8 @@ public class OwlJobProperties {
      * 是否启用自动装配 定时任务的 bean
      */
     private boolean enable = true;
-    
-    
+
+
     @NestedConfigurationProperty
     private OwlJobConfig config = new OwlJobConfig();
 

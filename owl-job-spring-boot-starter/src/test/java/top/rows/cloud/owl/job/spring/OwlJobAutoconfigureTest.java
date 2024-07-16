@@ -11,7 +11,6 @@ import top.rows.cloud.owl.job.api.model.OwlJobParam;
 import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import net.bytebuddy.utility.GraalImageCode;
 
 /**
  * @author 张治保
@@ -19,16 +18,16 @@ import net.bytebuddy.utility.GraalImageCode;
  */
 @SpringBootTest(classes = OwlJobApplication.class)
 public class OwlJobAutoconfigureTest {
-    
+
     @Autowired
     private IOwlJobExecutor executor;
-    
+
     @Autowired
     private IOwlJobTemplate template;
-    
+
     @Test
-    public void test() throws ExecutionException, InterruptedException {
-        String group = "hello-owl-job";
+    public void testDynamicListener() throws ExecutionException, InterruptedException {
+        String group = OwlJobApplication.GROUP + "1";
         CompletableFuture<OwlJobParam<Object>> future = new CompletableFuture<>();
         try {
             executor.addListener(group, future::complete);
@@ -45,5 +44,15 @@ public class OwlJobAutoconfigureTest {
         System.out.println("当前时间：" + LocalDateTime.now());
         System.out.println("设定时间：" + objectTimeJobParam.getTime());
         System.out.println("读取到的数据" + objectTimeJobParam);
+    }
+
+    @Test
+    void testAutoListener() throws InterruptedException {
+        template.add(
+                OwlJobApplication.GROUP,
+                OwlJob.of(LocalDateTime.now().plusSeconds(3))
+                        .setParam("hello owl")
+        );
+        Thread.sleep(5000);
     }
 }

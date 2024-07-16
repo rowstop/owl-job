@@ -64,6 +64,6 @@ public interface IGroupedOwlTemplate {
      * 委派
      */
     IOwlJobTemplate delegate();
-    
+
 
 }
