@@ -10,5 +10,7 @@
     </parent>
 
     <artifactId>owl-job-api</artifactId>
+    <description>Distributed Scheduled Tasks Based on Redisson</description>
+    <url>https://github.com/rowstop/owl-job</url>
 
 </project>

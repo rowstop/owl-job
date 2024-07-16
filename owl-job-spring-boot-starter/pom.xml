@@ -10,6 +10,8 @@
     </parent>
 
     <artifactId>owl-job-spring-boot-starter</artifactId>
+    <description>Distributed Scheduled Tasks Based on Redisson</description>
+    <url>https://github.com/rowstop/owl-job</url>
 
     <properties>
         <spring-boot.version>2.7.7</spring-boot.version>
@@ -39,7 +41,7 @@
             <artifactId>owl-job-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+
         <!--     test   -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -10,6 +10,15 @@
   <groupId>top.rows.cloud.owl.job</groupId>
   <artifactId>owl-job-core</artifactId>
   <version>1.0.0</version>
+  <description>Distributed Scheduled Tasks Based on Redisson</description>
+  <url>https://github.com/rowstop/owl-job</url>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version2.0</name>
+      <url>https://www.apache.org/licenses/</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
   <dependencies>
     <dependency>
       <groupId>top.rows.cloud.owl.job</groupId>

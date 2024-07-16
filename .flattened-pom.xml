@@ -6,26 +6,57 @@
   <artifactId>owl-job</artifactId>
   <version>1.0.0</version>
   <packaging>pom</packaging>
+  <description>Distributed Scheduled Tasks Based on Redisson</description>
+  <url>https://github.com/rowstop/owl-job</url>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version2.0</name>
+      <url>https://www.apache.org/licenses/</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>rowstop</name>
+      <email>rowstop@yeah.net</email>
+    </developer>
+  </developers>
   <modules>
     <module>owl-job-api</module>
     <module>owl-job-core</module>
     <module>owl-job-spring-boot-starter</module>
   </modules>
+  <scm>
+    <connection>scm:git:https://github.com/rowstop/owl-job.git</connection>
+    <developerConnection>https://github.com/rowstop</developerConnection>
+    <tag>v${project.version}</tag>
+    <url>https://github.com/rowstop/owl-job</url>
+  </scm>
+  <distributionManagement>
+    <snapshotRepository>
+      <id>${serverId}</id>
+      <url>https://central.sonatype.com/</url>
+    </snapshotRepository>
+  </distributionManagement>
   <properties>
-    <owl.version>1.0.0</owl.version>
+    <lombok.version>1.18.32</lombok.version>
     <slf4j.version>1.7.36</slf4j.version>
+    <java.version>1.8</java.version>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+    <serverId>central</serverId>
+    <jupiter.version>5.7.2</jupiter.version>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <redisson.version>3.16.7</redisson.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>8</maven.compiler.source>
-    <lombok.version>1.18.32</lombok.version>
-    <maven.compiler.target>${maven.compiler.source}</maven.compiler.target>
+    <owl.version>1.0.0</owl.version>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
   </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>org.junit.jupiter</groupId>
         <artifactId>junit-jupiter</artifactId>
-        <version>5.9.3</version>
+        <version>${jupiter.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -62,6 +93,55 @@
         <configuration>
           <updatePomFile>true</updatePomFile>
           <flattenMode>resolveCiFriendliesOnly</flattenMode>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.2.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <additionalparam>-Xdoclint:none</additionalparam>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>0.4.0</version>
+        <extensions>true</extensions>
+        <configuration>
+          <publishingServerId>${serverId}</publishingServerId>
+          <tokenAuth>true</tokenAuth>
         </configuration>
       </plugin>
     </plugins>
