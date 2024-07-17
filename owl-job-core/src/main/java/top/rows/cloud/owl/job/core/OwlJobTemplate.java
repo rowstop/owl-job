@@ -71,7 +71,12 @@ public class OwlJobTemplate implements IOwlJobTemplate {
 
     private static <T> String taskId(@NonNull IOwlJob<T> job) {
         Supplier<String> idGenerator = job.getIdGenerator();
-        return idGenerator == null ? UUID.randomUUID().toString() : idGenerator.get();
+        if (idGenerator == null){
+            return UUID.randomUUID().toString()
+        }
+        //置为空 避免被序列化
+        job.setIdGenerator(null);
+        return idGenerator.get();
     }
 
     /**
