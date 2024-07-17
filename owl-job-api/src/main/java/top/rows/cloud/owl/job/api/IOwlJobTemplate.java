@@ -49,6 +49,16 @@ public interface IOwlJobTemplate {
     CompletionStage<IOwlJob<Object>> removeAsync(String group, String id);
 
     /**
+     * 清空所有任务
+     */
+    void clear();
+
+    /**
+     * 异步清空所有任务
+     */
+    CompletionStage<Void> clearAsync();
+
+    /**
      * 开启任务处理
      */
     void init();

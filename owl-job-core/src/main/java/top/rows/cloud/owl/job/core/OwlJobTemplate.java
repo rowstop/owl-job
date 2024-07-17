@@ -162,6 +162,25 @@ public class OwlJobTemplate implements IOwlJobTemplate {
     }
 
     /**
+     * 清空所有任务
+     */
+    @Override
+    public void clear() {
+        delayedQueue.clear();
+        jobConfigRMap.clear();
+    }
+
+    /**
+     * 异步清空所有任务
+     */
+    @Override
+    public CompletionStage<Void> clearAsync() {
+        return delayedQueue.deleteAsync()
+                .thenRun(jobConfigRMap::clear);
+    }
+
+
+    /**
      * 初始化方法
      */
     @Override
