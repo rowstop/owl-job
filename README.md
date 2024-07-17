@@ -17,7 +17,7 @@
 </dependency>
 ```
 # 2. 简单使用
-<a href="https://github.com/rowstop/owl-job/blob/master/owl-job-core/src/test/java/top/rows/cloud/owl/job/core/TimedJobTemplateTest.java">example</a>
+<a href="https://github.com/rowstop/owl-job/blob/master/owl-job-core/src/test/java/top/rows/cloud/owl/job/core/TimedJobTemplateTest.java">Examples</a>
 ## 初始化
 ```java
     //全局配置
