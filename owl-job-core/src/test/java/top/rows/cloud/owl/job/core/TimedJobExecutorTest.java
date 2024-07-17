@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import top.rows.cloud.owl.job.api.IOwlJobExecutor;
-import top.rows.cloud.owl.job.api.model.OwlJob;
 import top.rows.cloud.owl.job.core.config.OwlJobConfig;
+import top.rows.cloud.owl.job.core.model.OwlJob;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.ExecutionException;
@@ -48,7 +48,7 @@ public class TimedJobExecutorTest {
         jobExecutor.execAsyncFuture(
                 null,
                 OwlJobHelper.router(taskGroup, taskId),
-                OwlJob.of(LocalDateTime.now())
+                OwlJob.disposable(LocalDateTime.now())
                         .setParam(param)
         ).get();
         Assertions.assertEquals(param, paramBox.get());

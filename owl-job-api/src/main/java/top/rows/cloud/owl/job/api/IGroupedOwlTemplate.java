@@ -1,7 +1,7 @@
 package top.rows.cloud.owl.job.api;
 
 
-import top.rows.cloud.owl.job.api.model.OwlJob;
+import top.rows.cloud.owl.job.api.model.IOwlJob;
 
 import java.util.concurrent.CompletionStage;
 
@@ -19,7 +19,7 @@ public interface IGroupedOwlTemplate {
      * @param <T> 定时任务参数
      * @return 任务 id
      */
-    default <T> String add(OwlJob<T> job) {
+    default <T> String add(IOwlJob<T> job) {
         return delegate().add(group(), job);
     }
 
@@ -29,7 +29,7 @@ public interface IGroupedOwlTemplate {
      * @param id 任务 id 自行定义的任务 key
      * @return 定时任务配置
      */
-    default OwlJob<Object> remove(String id) {
+    default IOwlJob<Object> remove(String id) {
         return delegate().remove(group(), id);
     }
 
@@ -39,7 +39,7 @@ public interface IGroupedOwlTemplate {
      * @param job 定时任务配置
      * @return 异步任务 id
      */
-    default <T> CompletionStage<String> addAsync(OwlJob<T> job) {
+    default <T> CompletionStage<String> addAsync(IOwlJob<T> job) {
         return delegate().addAsync(group(), job);
     }
 
@@ -49,7 +49,7 @@ public interface IGroupedOwlTemplate {
      * @param id 任务 id 自行定义的任务 key
      * @return 异步处理结果
      */
-    default CompletionStage<OwlJob<Object>> removeAsync(String id) {
+    default CompletionStage<IOwlJob<Object>> removeAsync(String id) {
         return delegate().removeAsync(group(), id);
     }
 

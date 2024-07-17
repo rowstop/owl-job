@@ -1,7 +1,7 @@
 package top.rows.cloud.owl.job.api;
 
 
-import top.rows.cloud.owl.job.api.model.OwlJob;
+import top.rows.cloud.owl.job.api.model.IOwlJob;
 
 import java.util.concurrent.CompletionStage;
 
@@ -19,7 +19,7 @@ public interface IOwlJobTemplate {
      * @param <T>   定时任务参数
      * @return 任务 id
      */
-    <T> String add(String group, OwlJob<T> job);
+    <T> String add(String group, IOwlJob<T> job);
 
     /**
      * 移除定时任务
@@ -28,7 +28,7 @@ public interface IOwlJobTemplate {
      * @param id    任务 id 自行定义的任务 key
      * @return 定时任务配置
      */
-    OwlJob<Object> remove(String group, String id);
+    IOwlJob<Object> remove(String group, String id);
 
     /**
      * 异步添加定时任务
@@ -37,7 +37,7 @@ public interface IOwlJobTemplate {
      * @param job   定时任务配置
      * @return 异步任务 id
      */
-    <T> CompletionStage<String> addAsync(String group, OwlJob<T> job);
+    <T> CompletionStage<String> addAsync(String group, IOwlJob<T> job);
 
     /**
      * 异步移除定时任务
@@ -46,7 +46,7 @@ public interface IOwlJobTemplate {
      * @param id    任务 id 自行定义的任务 key
      * @return 异步处理结果
      */
-    CompletionStage<OwlJob<Object>> removeAsync(String group, String id);
+    CompletionStage<IOwlJob<Object>> removeAsync(String group, String id);
 
     /**
      * 开启任务处理

@@ -2,7 +2,7 @@ package top.rows.cloud.owl.job.api;
 
 
 import lombok.NonNull;
-import top.rows.cloud.owl.job.api.model.OwlJob;
+import top.rows.cloud.owl.job.api.model.IOwlJob;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -46,7 +46,7 @@ public interface IOwlJobExecutor {
      * @param job      任务配置
      * @param <T>      任务数据类型
      */
-    <T> void execAsync(IOwlJobTemplate template, String router, OwlJob<T> job);
+    <T> void execAsync(IOwlJobTemplate template, String router, IOwlJob<T> job);
 
     /**
      * 异步执行任务
@@ -56,7 +56,7 @@ public interface IOwlJobExecutor {
      * @param job      任务配置
      * @param <T>      任务数据类型
      */
-    <T> CompletableFuture<Void> execAsyncFuture(IOwlJobTemplate template, String router, OwlJob<T> job);
+    <T> CompletableFuture<Void> execAsyncFuture(IOwlJobTemplate template, String router, IOwlJob<T> job);
 
     /**
      * 关闭执行器

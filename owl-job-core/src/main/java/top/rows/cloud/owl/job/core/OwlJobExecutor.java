@@ -6,9 +6,9 @@ import top.rows.cloud.owl.job.api.IOwlJobExecutor;
 import top.rows.cloud.owl.job.api.IOwlJobListener;
 import top.rows.cloud.owl.job.api.IOwlJobRunner;
 import top.rows.cloud.owl.job.api.IOwlJobTemplate;
-import top.rows.cloud.owl.job.api.model.OwlJob;
-import top.rows.cloud.owl.job.api.model.OwlJobParam;
+import top.rows.cloud.owl.job.api.model.IOwlJob;
 import top.rows.cloud.owl.job.core.config.OwlJobConfig;
+import top.rows.cloud.owl.job.core.model.OwlJobParam;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -75,12 +75,12 @@ public class OwlJobExecutor implements IOwlJobExecutor {
      * @param <T>      任务数据类型
      */
     @Override
-    public final <T> void execAsync(IOwlJobTemplate template, String router, OwlJob<T> job) {
+    public final <T> void execAsync(IOwlJobTemplate template, String router, IOwlJob<T> job) {
         executor.execute(() -> execTask(false, template, router, job));
     }
 
     @Override
-    public <T> CompletableFuture<Void> execAsyncFuture(IOwlJobTemplate template, String router, OwlJob<T> job) {
+    public <T> CompletableFuture<Void> execAsyncFuture(IOwlJobTemplate template, String router, IOwlJob<T> job) {
         return CompletableFuture.runAsync(
                 () -> execTask(false, template, router, job),
                 executor
@@ -95,7 +95,7 @@ public class OwlJobExecutor implements IOwlJobExecutor {
         executor.shutdown();
     }
 
-    private <T> void execTask(boolean skipRepeat, IOwlJobTemplate template, String router, OwlJob<T> job) {
+    private <T> void execTask(boolean skipRepeat, IOwlJobTemplate template, String router, IOwlJob<T> job) {
         String[] groupAndTaskId = OwlJobHelper.groupAndTaskIdFromRouter(router);
         String group = groupAndTaskId[0];
         IOwlJobRunner<?> runner = groupListenerMap.get(group);
@@ -124,34 +124,29 @@ public class OwlJobExecutor implements IOwlJobExecutor {
                 }
             }
         }
-
-        //是否需要重复执行 重复执行周期不为空 即允许重复执行
-        long repeatNanos;
-        if (skipRepeat || (repeatNanos = job.getRepeatNanos()) < 1) {
+        //是否需要重复执行 下个执行周期不为空 即需要继续执行任务
+        IOwlJob<T> nextJob;
+        if (skipRepeat || (nextJob = job.next()) == null) {
             return;
         }
         //异步执行
         executor.execute(() -> {
-            //周期性执行的任务
-            LocalDateTime nextTime = job.getTime().plusNanos(repeatNanos);
-            //当 当前时间 大于等于 下次执行时间则立即执行即可
-            while (!LocalDateTime.now().isBefore(nextTime)) {
-                LocalDateTime finalTime = nextTime;
-                executor.execute(() -> execTask(true, template, router, job.copyToRepeat(finalTime)));
-                nextTime = nextTime.plusNanos(repeatNanos);
+            IOwlJob<T> next = nextJob;
+            //需不需要 立即执行 
+            //当满足 当前时间大于等于下次执行时间时表示需要立即执行
+            //立即执行将在本地循环异步执行  
+            while (next != null && !LocalDateTime.now().isBefore(next.getTime())) {
+                IOwlJob<T> executingJob = next;
+                executor.execute(() -> execTask(true, template, router, executingJob));
+                next = next.next();
             }
-
-            //当前时间小于执行时间
-            // 否则 放到延迟队列里 延迟执行 
-            template.add(
-                    group,
-                    //更新执行时间
-                    job.setTime(nextTime)
-                            //使用相同的任务 id
-                            .setIdGenerator(() -> groupAndTaskId[1])
-            );
+            //如果下次执行数据为空 则表示不需要继续执行
+            if (next == null) {
+                return;
+            }
+            //当前时间小于执行时间 放到延迟队列里 延迟执行 
+            template.addAsync(group, next.setIdGenerator(() -> groupAndTaskId[1]));
         });
-
     }
 
     /**
@@ -162,7 +157,7 @@ public class OwlJobExecutor implements IOwlJobExecutor {
      * @param <T>    人数参数类型
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private <T> void run(IOwlJobRunner<?> runner, OwlJob<T> job) {
+    private <T> void run(IOwlJobRunner<?> runner, IOwlJob<T> job) {
         runner.run(
                 new OwlJobParam()
                         .setTime(job.getTime())

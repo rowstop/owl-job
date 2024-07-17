@@ -13,4 +13,12 @@
     <description>Distributed Scheduled Tasks Based on Redisson</description>
     <url>https://github.com/rowstop/owl-job</url>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.intellij</groupId>
+            <artifactId>annotations</artifactId>
+            <version>12.0</version>
+        </dependency>
+    </dependencies>
+
 </project>

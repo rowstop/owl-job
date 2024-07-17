@@ -1,9 +1,10 @@
-package top.rows.cloud.owl.job.api.model;
+package top.rows.cloud.owl.job.core.model;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import top.rows.cloud.owl.job.api.model.IOwlJobParam;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Accessors(chain = true)
-public class OwlJobParam<T> {
+public class OwlJobParam<T> implements IOwlJobParam<T> {
 
     /**
      * 任务参数数据

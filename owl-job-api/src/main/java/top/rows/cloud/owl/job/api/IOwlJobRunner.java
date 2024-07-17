@@ -1,7 +1,7 @@
 package top.rows.cloud.owl.job.api;
 
 
-import top.rows.cloud.owl.job.api.model.OwlJobParam;
+import top.rows.cloud.owl.job.api.model.IOwlJobParam;
 
 /**
  * @author 张治保
@@ -14,5 +14,5 @@ public interface IOwlJobRunner<T> {
      *
      * @param param 任务参数
      */
-    void run(OwlJobParam<T> param);
+    void run(IOwlJobParam<T> param);
 }

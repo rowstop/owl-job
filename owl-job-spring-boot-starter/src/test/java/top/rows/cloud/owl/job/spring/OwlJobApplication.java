@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import top.rows.cloud.owl.job.api.IOwlJobListener;
-import top.rows.cloud.owl.job.api.model.OwlJobParam;
+import top.rows.cloud.owl.job.api.model.IOwlJobParam;
 
 import java.time.LocalDateTime;
 
@@ -30,7 +30,7 @@ public class OwlJobApplication {
             }
 
             @Override
-            public void run(OwlJobParam<String> param) {
+            public void run(IOwlJobParam<String> param) {
                 System.out.println("当前时间：" + LocalDateTime.now());
                 System.out.println("设定时间：" + param.getTime());
                 System.out.println("读取到的数据" + param);

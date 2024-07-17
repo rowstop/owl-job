@@ -9,7 +9,7 @@ import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
 import top.rows.cloud.owl.job.api.IOwlJobExecutor;
 import top.rows.cloud.owl.job.api.IOwlJobTemplate;
-import top.rows.cloud.owl.job.api.model.OwlJob;
+import top.rows.cloud.owl.job.api.model.IOwlJob;
 import top.rows.cloud.owl.job.core.config.OwlJobConfig;
 
 import java.time.Duration;
@@ -40,7 +40,7 @@ public class OwlJobTemplate implements IOwlJobTemplate {
     private final RBlockingQueue<String> blockingQueue;
     private final RDelayedQueue<String> delayedQueue;
     private final IOwlJobExecutor jobExecutor;
-    private final RMap<String, OwlJob<Object>> jobConfigRMap;
+    private final RMap<String, IOwlJob<Object>> jobConfigRMap;
     private final long execCorrectionMills;
 
     /**
@@ -69,7 +69,7 @@ public class OwlJobTemplate implements IOwlJobTemplate {
         this.execCorrectionMills = config.getExecCorrectionMills();
     }
 
-    private static <T> String taskId(@NonNull OwlJob<T> job) {
+    private static <T> String taskId(@NonNull IOwlJob<T> job) {
         Supplier<String> idGenerator = job.getIdGenerator();
         return idGenerator == null ? UUID.randomUUID().toString() : idGenerator.get();
     }
@@ -95,10 +95,10 @@ public class OwlJobTemplate implements IOwlJobTemplate {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public final <T> String add(@NonNull String group, @NonNull OwlJob<T> job) {
+    public final <T> String add(@NonNull String group, @NonNull IOwlJob<T> job) {
         String taskId = taskId(job);
         String router = OwlJobHelper.router(group, taskId);
-        jobConfigRMap.put(router, (OwlJob<Object>) job);
+        jobConfigRMap.put(router, (IOwlJob<Object>) job);
         delayedQueue.offer(
                 router,
                 toDelayMills(job.getTime()),
@@ -113,7 +113,7 @@ public class OwlJobTemplate implements IOwlJobTemplate {
      * @param id 任务id
      */
     @Override
-    public final OwlJob<Object> remove(@NonNull String group, @NonNull String id) {
+    public final IOwlJob<Object> remove(@NonNull String group, @NonNull String id) {
         String router = OwlJobHelper.router(group, id);
         delayedQueue.remove(router);
         return jobConfigRMap.remove(router);
@@ -127,10 +127,10 @@ public class OwlJobTemplate implements IOwlJobTemplate {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public final <T> CompletionStage<String> addAsync(@NonNull String group, @NonNull OwlJob<T> job) {
+    public final <T> CompletionStage<String> addAsync(@NonNull String group, @NonNull IOwlJob<T> job) {
         String taskId = taskId(job);
         String router = OwlJobHelper.router(group, taskId);
-        return jobConfigRMap.putAsync(router, (OwlJob<Object>) job)
+        return jobConfigRMap.putAsync(router, (IOwlJob<Object>) job)
                 .thenApply(
                         (_pre) -> {
                             delayedQueue.offer(
@@ -150,7 +150,7 @@ public class OwlJobTemplate implements IOwlJobTemplate {
      * @return 异步处理结果
      */
     @Override
-    public final CompletionStage<OwlJob<Object>> removeAsync(@NonNull String group, @NonNull String id) {
+    public final CompletionStage<IOwlJob<Object>> removeAsync(@NonNull String group, @NonNull String id) {
         String router = OwlJobHelper.router(group, id);
         return delayedQueue.removeAsync(router)
                 .thenApply((_v) -> jobConfigRMap.remove(router));
@@ -181,7 +181,7 @@ public class OwlJobTemplate implements IOwlJobTemplate {
                 }
                 //已获取到任务
                 //获取任务详情并删除原数据
-                OwlJob<Object> job = jobConfigRMap.remove(router);
+                IOwlJob<Object> job = jobConfigRMap.remove(router);
                 if (job == null) {
                     continue;
                 }
