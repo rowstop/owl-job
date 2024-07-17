@@ -17,3 +17,48 @@
 </dependency>
 ```
 # 2. 简单使用
+## 初始化
+```java
+    //全局配置
+    OwlJobConfig timedConfig = new OwlJobConfig()
+        //命名空间
+        .setNamespace("owl-job")
+        //执行器线程池配置
+        .setExecutorThreadPool(
+                new OwlJobConfig.ThreadPoolProperties()
+                        .setThreadNamePrefix("TJ-")
+                        .setCorePoolSize(50)
+                        .setMaxPoolSize(100)
+                        .setQueueCapacity(2000)
+        );
+    //初始化任务执行器 （执行器用于添加和执行监听器）
+    IOwlJobExecutor executor = new OwlJobExecutor(timedConfig);
+    //初始化 template （template 用于添加、移除定时任务）
+    IOwlJobTemplate template = new OwlJobTemplate(timedConfig, redissonClient, executor);
+    //使用前调用初始化方法
+    template.init();
+```
+## 添加任务监听器
+```java
+    //任务分组
+    String group = "hello-owl-job";
+    executor.addListener(group, param->{
+        System.out.println("当前时间：" + LocalDateTime.now());
+        System.out.println("设定时间：" + param.getTime());
+        System.out.println("读取到的数据" + param);
+    }）
+```
+
+## 添加定时任务
+```java
+    //添加任务
+    template.add(
+        group,
+        //设置首次执行时间 当前时间加三秒
+        OwlJob.of(LocalDateTime.now().plusSeconds(3))
+                //设置回调参数
+                .setParam("hello owl")
+    );
+```
+
+
