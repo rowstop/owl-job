@@ -118,8 +118,8 @@ public class OwlJob<T> implements IOwlJob<T> {
      * @param <T>          参数类型
      * @return IOwlJob
      */
-    public static <T> OwlJob<T> fixRate(Duration rateDuration, @NonNull LocalDateTime nextTime) {
-        return fixRate(rateDuration.toMillis(), nextTime);
+    public static <T> OwlJob<T> fixedRate(Duration rateDuration, @NonNull LocalDateTime nextTime) {
+        return fixedRate(rateDuration.toMillis(), nextTime);
     }
 
     /**
@@ -130,10 +130,10 @@ public class OwlJob<T> implements IOwlJob<T> {
      * @param <T>       参数类型
      * @return IOwlJob
      */
-    public static <T> OwlJob<T> fixRate(long rateMills, @NonNull LocalDateTime nextTime) {
+    public static <T> OwlJob<T> fixedRate(long rateMills, @NonNull LocalDateTime nextTime) {
         OwlJob<T> job = new OwlJob<>();
         job.time = nextTime;
-        job.type = OwlJobType.DISPOSABLE;
+        job.type = OwlJobType.FIXED_RATE;
         job.rateNanos = rateMills * 1_000_000;
         return job;
     }
@@ -178,7 +178,7 @@ public class OwlJob<T> implements IOwlJob<T> {
             return null;
         }
         //固定频率的任务
-        if (OwlJobType.FIX_RATE == type) {
+        if (OwlJobType.FIXED_RATE == type) {
             return copy(time.plusNanos(rateNanos));
         }
         //cron 表达式任务

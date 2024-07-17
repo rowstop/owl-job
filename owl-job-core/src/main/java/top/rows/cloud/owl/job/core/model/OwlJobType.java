@@ -8,7 +8,7 @@ public enum OwlJobType {
     //一次性的定时任务
     DISPOSABLE,
     //固定频率速度轮训
-    FIX_RATE,
+    FIXED_RATE,
     //cron
     CRON
 }
