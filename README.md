@@ -60,6 +60,9 @@
                 //设置回调参数
                 .setParam("hello owl")
     );
-```
-## 等待三秒中后查看结果
+    //休眠三秒查看结果
+    Thread.sleep(3000);
+    //程序结束 需要终止任务处理
+    template.shutdown();
+``
 
