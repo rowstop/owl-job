@@ -29,7 +29,7 @@ public class GroupedTimedJobTemplateTest {
                 .setNamespace("owl-job")
                 .setExecutorThreadPool(
                         new OwlJobConfig.ThreadPoolProperties()
-                                .setThreadNamePrefix("TJ-")
+                                .setThreadNamePrefix("TJ")
                                 .setCorePoolSize(50)
                                 .setMaxPoolSize(100)
                                 .setQueueCapacity(2000)

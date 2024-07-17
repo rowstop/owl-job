@@ -28,7 +28,7 @@ public class TimedJobTemplateTest {
                 .setNamespace("owl-job")
                 .setExecutorThreadPool(
                         new OwlJobConfig.ThreadPoolProperties()
-                                .setThreadNamePrefix("TJ-")
+                                .setThreadNamePrefix("TJ")
                                 .setCorePoolSize(50)
                                 .setMaxPoolSize(100)
                                 .setQueueCapacity(2000)
@@ -65,5 +65,31 @@ public class TimedJobTemplateTest {
         System.out.println("设定时间：" + objectTimeJobParam.getTime());
         System.out.println("读取到的数据" + objectTimeJobParam);
     }
+
+    @Test
+    void testCron() throws InterruptedException {
+        //每分钟的 1,5,9,20,39,48,59秒各支行一次
+        String cron = "1,5,9,20,39,48,59 * * * * ?";
+        String group = "hello-owl-job-cron";
+        CompletableFuture<IOwlJobParam<Object>> future = new CompletableFuture<>();
+        try {
+            executor.addListener(group, param -> {
+                System.out.println("当前时间：" + LocalDateTime.now());
+                System.out.println("设定时间：" + param.getTime());
+                System.out.println("读取到的数据" + param);
+            });
+            template.add(
+                    group,
+                    //设置首次执行时间
+                    OwlJob.cron(cron)
+                            //设置回调参数
+                            .setParam("job of cron")
+            );
+        } catch (Exception ex) {
+            future.completeExceptionally(ex);
+        }
+        Thread.sleep(10000000);
+    }
+
 
 }

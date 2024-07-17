@@ -72,7 +72,7 @@ public class OwlJob<T> implements IOwlJob<T> {
      * @param <T>        参数类型
      * @return 任务详情
      */
-    public static <T> IOwlJob<T> cron(@NonNull String quartzCron) {
+    public static <T> OwlJob<T> cron(@NonNull String quartzCron) {
         OwlJob<T> job = new OwlJob<>();
         job.cron = quartzCron;
         job.type = OwlJobType.CRON;
