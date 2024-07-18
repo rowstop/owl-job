@@ -99,7 +99,7 @@ setParam("hello owl") // Set callback parameter
 // Sleep for three seconds to see the result
         Thread.
 
-sleep(3000);
+Thread.sleep(3000);
 
 // End program; shutdown task processing
 template.
