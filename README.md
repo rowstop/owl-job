@@ -103,12 +103,12 @@ executor.addListener(
 
 ```java
 executor.addListener(
-        new IOwlJobListener<Object>() {
+    new IOwlJobListener<Object>() {
         @Override
         public String group () {
             return GROUP;
         }
-    
+        
         @Override
         public void run (IOwlJobParam < Object > param) {
             System.out.println(

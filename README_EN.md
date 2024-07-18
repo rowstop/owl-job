@@ -104,20 +104,20 @@ OR
 
 ```java
 executor.addListener(
-  new IOwlJobListener<Object>() {
-       @Override
-       public String group () {
-           return GROUP;
-       }
-   
-       @Override
-       public void run (IOwlJobParam < Object > param) {
-           System.out.println(
-                   "\n当前时间：" + LocalDateTime.now() +
-                           "\n设定时间：" + param.getTime() +
-                           "\n任务参数：" + param.getParam()
-           );
-       }
+   new IOwlJobListener<Object>() {
+      @Override
+      public String group () {
+         return GROUP;
+      }
+      
+      @Override
+      public void run (IOwlJobParam < Object > param) {
+         System.out.println(
+                 "\n当前时间：" + LocalDateTime.now() +
+                         "\n设定时间：" + param.getTime() +
+                         "\n任务参数：" + param.getParam()
+         );
+      }
    }
 );
 ```
