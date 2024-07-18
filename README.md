@@ -99,7 +99,7 @@ setParam("hello owl")
             //休眠三秒查看结果
             Thread.
 
-sleep(3000);
+Thread.sleep(3000);
 //程序结束 需要终止任务处理
     template.
 
