@@ -54,9 +54,7 @@ OwlJobConfig timedConfig = new OwlJobConfig()
 
 IOwlJobExecutor executor = new OwlJobExecutor(timedConfig);
 IOwlJobTemplate template = new OwlJobTemplate(timedConfig, RedissonClientGetter.get(), executor);
-template.
-
-init();
+template.init();
 ```
 
 ## Add Task Listeners
@@ -65,18 +63,10 @@ init();
 // Task group
 String group = "hello-owl-job";
 
-executor.
-
-addListener(group, param ->{
-        System.out.
-
-println("Current time: "+LocalDateTime.now());
-        System.out.
-
-println("Scheduled time: "+param.getTime());
-        System.out.
-
-println("Data read: "+param);
+executor.addListener(group, param ->{
+        System.out.println("Current time: "+LocalDateTime.now());
+        System.out.println("Scheduled time: "+param.getTime());
+        System.out.println("Data read: "+param);
 });
 ```
 
@@ -85,22 +75,14 @@ println("Data read: "+param);
 ```java
 // Add task
 template.add(
-        group,
-        OwlJob.disposable(LocalDateTime.now().
-
-plusSeconds(3)) // Set initial execution time (current time plus three seconds)
-        .
-
-setParam("job of disposable") // Set callback parameter
+   group,
+   OwlJob.disposable(LocalDateTime.now().plusSeconds(3)) // Set initial execution time (current time plus three seconds)
+        .setParam("job of disposable") // Set callback parameter
 );
 // Sleep for three seconds to see the result
-        Thread.
-
-sleep(3000);
+Thread.sleep(3000);
 // End program; shutdown task processing
-template.
-
-shutdown();
+template.shutdown();
 ```
 
 # 3. Task Listener Registration Methods
@@ -110,18 +92,12 @@ shutdown();
 ```java
  executor.addListener(
         GROUP,
-        (param) ->System.out.
-
-println(
+        (param) ->System.out.println(
                 "\n当前时间："+LocalDateTime.now() +
-        "\n设定时间："+param.
-
-getTime() +
-        "\n任务参数："+param.
-
-getParam()
+                 "\n设定时间："+param.getTime() +
+                 "\n任务参数："+param.getParam()
         )
-                )
+ )
 ```
 
 OR
@@ -129,19 +105,19 @@ OR
 ```java
 executor.addListener(
   new IOwlJobListener<Object>() {
-    @Override
-    public String group () {
-        return GROUP;
-    }
-
-    @Override
-    public void run (IOwlJobParam < Object > param) {
-        System.out.println(
-                "\n当前时间：" + LocalDateTime.now() +
-                        "\n设定时间：" + param.getTime() +
-                        "\n任务参数：" + param.getParam()
-        );
-    }
-}
+       @Override
+       public String group () {
+           return GROUP;
+       }
+   
+       @Override
+       public void run (IOwlJobParam < Object > param) {
+           System.out.println(
+                   "\n当前时间：" + LocalDateTime.now() +
+                           "\n设定时间：" + param.getTime() +
+                           "\n任务参数：" + param.getParam()
+           );
+       }
+   }
 );
 ```

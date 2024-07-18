@@ -52,9 +52,7 @@ OwlJobConfig timedConfig = new OwlJobConfig()
 
 IOwlJobExecutor executor = new OwlJobExecutor(timedConfig);
 IOwlJobTemplate template = new OwlJobTemplate(timedConfig, RedissonClientGetter.get(), executor);
-template.
-
-init();
+template.init();
 ```
 
 ## 添加任务监听器
@@ -62,18 +60,10 @@ init();
 ```java
     //任务分组
 String group = "hello-owl-job";
-executor.
-
-addListener(group, param->{
-        System.out.
-
-println("当前时间："+LocalDateTime.now());
-        System.out.
-
-println("设定时间："+param.getTime());
-        System.out.
-
-println("读取到的数据"+param);
+executor.addListener(group, param->{
+    System.out.println("当前时间："+LocalDateTime.now());
+    System.out.println("设定时间："+param.getTime());
+    System.out.println("读取到的数据"+param);
 }）
 ```
 
@@ -84,22 +74,14 @@ println("读取到的数据"+param);
 template.add(
         group,
         //设置首次执行时间
-        OwlJob.disposable(LocalDateTime.now().
-
-plusSeconds(3))
-        //设置回调参数
-        .
-
-setParam("job of disposable")
+        OwlJob.disposable(LocalDateTime.now().plusSeconds(3))
+            //设置回调参数
+            .setParam("job of disposable")
 );
 //休眠三秒查看结果
-        Thread.
-
-sleep(3000);
+Thread.sleep(3000);
 //程序结束 需要终止任务处理
-template.
-
-shutdown();
+template.shutdown();
 ```
 
 # 3. 任务监听器注册方式
@@ -108,40 +90,34 @@ shutdown();
 
 ```java
 executor.addListener(
-        GROUP,
-    (param) ->System.out.
-
-println(
+    GROUP,
+    (param) ->System.out.println(
             "\n当前时间："+LocalDateTime.now() +
-        "\n设定时间："+param.
-
-getTime() +
-        "\n任务参数："+param.
-
-getParam()
+            "\n设定时间："+param.getTime() +
+            "\n任务参数："+param.getParam()
     )
-            );
-```
+);
+``` 
 
 或
 
 ```java
 executor.addListener(
         new IOwlJobListener<Object>() {
-    @Override
-    public String group () {
-        return GROUP;
+        @Override
+        public String group () {
+            return GROUP;
+        }
+    
+        @Override
+        public void run (IOwlJobParam < Object > param) {
+            System.out.println(
+                    "\n当前时间：" + LocalDateTime.now() +
+                            "\n设定时间：" + param.getTime() +
+                            "\n任务参数：" + param.getParam()
+            );
+        }
     }
-
-    @Override
-    public void run (IOwlJobParam < Object > param) {
-        System.out.println(
-                "\n当前时间：" + LocalDateTime.now() +
-                        "\n设定时间：" + param.getTime() +
-                        "\n任务参数：" + param.getParam()
-        );
-    }
-}
 );
 ```
 
