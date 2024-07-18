@@ -42,6 +42,7 @@ public class TimedJobTemplateTest {
 
     @AfterAll
     static void shutdown() {
+        template.clear();
         template.shutdown();
     }
 

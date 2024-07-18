@@ -41,6 +41,7 @@ public class GroupedTimedJobTemplateTest {
 
     @AfterAll
     static void shutdown() {
+        template.clear();
         template.shutdown();
     }
 
