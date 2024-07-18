@@ -1,6 +1,6 @@
 # 特性
 
-1. 依赖RedissonClient: 只和redis通信，不额外增加服务端（后面考虑增加客户端，用于监控）
+1. 依赖RedissonClient: 只和redis通信，不额外增加服务端（后面考虑增加监控大屏）
 2. 完全依托于客户端，支持动态添加定时任务、支持动态添加任务监听器
 3. 支持一次性任务、固定频率任务、cron表达式任务（由[cron-utils](https://github.com/jmrozanec/cron-utils)做表达式解析）
 
