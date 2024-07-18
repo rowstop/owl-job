@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>top.rows.cloud.owl.job</groupId>
   <artifactId>owl-job</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
   <packaging>pom</packaging>
   <description>Distributed Scheduled Tasks Based on Redisson</description>
   <url>https://github.com/rowstop/owl-job</url>
