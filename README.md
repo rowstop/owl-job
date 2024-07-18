@@ -13,7 +13,7 @@
 <dependency>
     <groupId>top.rows.cloud.owl.job</groupId>
     <artifactId>owl-job-core</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
@@ -26,7 +26,7 @@
 <dependency>
     <groupId>top.rows.cloud.owl.job</groupId>
     <artifactId>owl-job-spring-boot-starter</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
