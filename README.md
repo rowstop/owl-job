@@ -41,22 +41,20 @@
 ```java
     //全局配置
 OwlJobConfig timedConfig = new OwlJobConfig()
-        //命名空间
         .setNamespace("owl-job")
-        //执行器线程池配置
         .setExecutorThreadPool(
                 new OwlJobConfig.ThreadPoolProperties()
-                        .setThreadNamePrefix("TJ-")
+                        .setThreadNamePrefix("TJ")
                         .setCorePoolSize(50)
                         .setMaxPoolSize(100)
                         .setQueueCapacity(2000)
         );
-//初始化任务执行器 （执行器用于添加和执行监听器）
+
 IOwlJobExecutor executor = new OwlJobExecutor(timedConfig);
-//初始化 template （template 用于添加、移除定时任务）
-IOwlJobTemplate template = new OwlJobTemplate(timedConfig, redissonClient, executor);
-//使用前调用初始化方法
-template.init();
+IOwlJobTemplate template = new OwlJobTemplate(timedConfig, RedissonClientGetter.get(), executor);
+template.
+
+init();
 ```
 
 ## 添加任务监听器
@@ -64,10 +62,18 @@ template.init();
 ```java
     //任务分组
 String group = "hello-owl-job";
-executor.addListener(group, param->{
-    System.out.println("当前时间："+LocalDateTime.now());
-    System.out.println("设定时间："+param.getTime());
-    System.out.println("读取到的数据"+param);
+executor.
+
+addListener(group, param->{
+        System.out.
+
+println("当前时间："+LocalDateTime.now());
+        System.out.
+
+println("设定时间："+param.getTime());
+        System.out.
+
+println("读取到的数据"+param);
 }）
 ```
 
@@ -76,16 +82,24 @@ executor.addListener(group, param->{
 ```java
 //添加任务
 template.add(
-    group,
-    //设置首次执行时间 当前时间加三秒
-    OwlJob.of(LocalDateTime.now().plusSeconds(3))
-    //设置回调参数
-    .setParam("hello owl")
+        group,
+        //设置首次执行时间
+        OwlJob.disposable(LocalDateTime.now().
+
+plusSeconds(3))
+        //设置回调参数
+        .
+
+setParam("job of disposable")
 );
 //休眠三秒查看结果
-Thread.sleep(3000);
+        Thread.
+
+sleep(3000);
 //程序结束 需要终止任务处理
-template.shutdown();
+template.
+
+shutdown();
 ```
 
 # 3. 任务监听器注册方式
@@ -94,13 +108,19 @@ template.shutdown();
 
 ```java
 executor.addListener(
-    GROUP,
-    (param) ->System.out.println(
+        GROUP,
+    (param) ->System.out.
+
+println(
             "\n当前时间："+LocalDateTime.now() +
-            "\n设定时间："+param.getTime() +
-            "\n任务参数："+param.getParam()
+        "\n设定时间："+param.
+
+getTime() +
+        "\n任务参数："+param.
+
+getParam()
     )
-);
+            );
 ```
 
 或
@@ -108,20 +128,20 @@ executor.addListener(
 ```java
 executor.addListener(
         new IOwlJobListener<Object>() {
-        @Override
-        public String group () {
-            return GROUP;
-        }
-    
-        @Override
-        public void run (IOwlJobParam < Object > param) {
-            System.out.println(
-                    "\n当前时间：" + LocalDateTime.now() +
-                            "\n设定时间：" + param.getTime() +
-                            "\n任务参数：" + param.getParam()
-            );
-        }
+    @Override
+    public String group () {
+        return GROUP;
     }
+
+    @Override
+    public void run (IOwlJobParam < Object > param) {
+        System.out.println(
+                "\n当前时间：" + LocalDateTime.now() +
+                        "\n设定时间：" + param.getTime() +
+                        "\n任务参数：" + param.getParam()
+        );
+    }
+}
 );
 ```
 
