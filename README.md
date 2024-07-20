@@ -1,3 +1,4 @@
+##### 📖 中文文档 | [📖 English Documentation](README_EN.md)
 # 特性
 
 1. 依赖RedissonClient: 只和redis通信，不额外增加服务端（后面考虑增加监控大屏）
