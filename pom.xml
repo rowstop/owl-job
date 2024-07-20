@@ -14,6 +14,7 @@
         <module>owl-job-api</module>
         <module>owl-job-core</module>
         <module>owl-job-spring-boot-starter</module>
+        <module>owl-job-dashboard</module>
     </modules>
 
     <licenses>
@@ -46,12 +47,13 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <serverId>central</serverId>
 
-        <owl.version>1.1.0</owl.version>
+        <owl.version>1.1.1</owl.version>
 
         <redisson.version>3.16.7</redisson.version>
         <lombok.version>1.18.32</lombok.version>
         <slf4j.version>1.7.36</slf4j.version>
 
+        <spring-boot.version>2.7.7</spring-boot.version>
         <jupiter.version>5.7.2</jupiter.version>
     </properties>
 
@@ -66,10 +68,19 @@
 
     <dependencyManagement>
         <dependencies>
+            <!--    jupiter        -->
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
                 <version>${jupiter.version}</version>
+            </dependency>
+            <!--spring boot bom-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

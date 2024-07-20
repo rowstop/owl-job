@@ -2,6 +2,7 @@ package top.rows.cloud.owl.job.core;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 import org.redisson.RedissonShutdownException;
 import org.redisson.api.RBlockingQueue;
 import org.redisson.api.RDelayedQueue;
@@ -10,6 +11,7 @@ import org.redisson.api.RedissonClient;
 import top.rows.cloud.owl.job.api.IOwlJobExecutor;
 import top.rows.cloud.owl.job.api.IOwlJobTemplate;
 import top.rows.cloud.owl.job.api.model.IOwlJob;
+import top.rows.cloud.owl.job.api.model.QueueNames;
 import top.rows.cloud.owl.job.core.config.OwlJobConfig;
 
 import java.time.Duration;
@@ -26,10 +28,6 @@ import java.util.function.Supplier;
 @Slf4j
 public class OwlJobTemplate implements IOwlJobTemplate {
 
-    /**
-     * 队列缓存 key前缀
-     */
-    private final static String QUEUE_NAME = "timed:job:";
     /**
      * blockingQueue 阻塞队列
      * delayedQueue  延迟队列
@@ -58,12 +56,13 @@ public class OwlJobTemplate implements IOwlJobTemplate {
      * @param redissonClient redisson 客户端
      * @param executor       定时任务执行器
      */
-    public OwlJobTemplate(OwlJobConfig config, RedissonClient redissonClient, IOwlJobExecutor executor) {
+    public OwlJobTemplate(OwlJobConfig config, RedissonClient redissonClient, @Nullable IOwlJobExecutor executor) {
         //获取全局命名空间
         @NonNull String namespace = config.getNamespace();
+        redissonClient.getSet(QueueNames.JOB_CONF_PREFIX).add(namespace);
         this.redissonClient = redissonClient;
-        this.jobConfigRMap = redissonClient.getMap(QUEUE_NAME + "(inf):" + namespace);
-        this.blockingQueue = redissonClient.getBlockingQueue(QUEUE_NAME + "(queue):" + namespace);
+        this.jobConfigRMap = redissonClient.getMap(QueueNames.JOB_CONF_PREFIX + ":" + namespace);
+        this.blockingQueue = redissonClient.getBlockingQueue(QueueNames.JOB_QUEUE_PREFIX + ":" + namespace);
         this.delayedQueue = redissonClient.getDelayedQueue(this.blockingQueue);
         this.jobExecutor = executor;
         this.execCorrectionMills = config.getExecCorrectionMills();
@@ -185,7 +184,7 @@ public class OwlJobTemplate implements IOwlJobTemplate {
      */
     @Override
     public final void init() {
-        if (running) {
+        if (running || jobExecutor == null) {
             return;
         }
         //标记为运行中
