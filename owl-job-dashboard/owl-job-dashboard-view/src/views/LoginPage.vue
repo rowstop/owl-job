@@ -72,7 +72,7 @@ const doLogin = throttle(() => {
     width: 500px;
     padding: 0 16px 24px 16px;
     border-radius: 12px;
-    border: 1px solid $owl-primary-color;
+    border: 1px solid $owl-color-primary;
 
     .login-form {
       width: 100%;

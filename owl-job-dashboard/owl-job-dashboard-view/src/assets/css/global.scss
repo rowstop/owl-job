@@ -1,5 +1,5 @@
 //colors
-$owl-primary-color: #ee0c48;
+$owl-color-primary: #ee0c48;
 
 //radius
 $owl-card-radius: 20;
@@ -7,7 +7,11 @@ $owl-card-radius: 20;
 @forward 'element-plus/theme-chalk/src/common/var.scss' with (
   $colors: (
     'primary': (
-      'base': $owl-primary-color,
+      'base': $owl-color-primary,
     ),
   ),
 );
+
+:export {
+  owl-color-primary: $owl-color-primary
+}

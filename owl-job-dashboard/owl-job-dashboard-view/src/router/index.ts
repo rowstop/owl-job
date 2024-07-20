@@ -7,20 +7,31 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: '主页',
-      component: HomeView,
-      meta: {
-        auth: true
-      }
-    },
-    {
       path: '/login',
-      name: '登录',
+      name: 'login',
       component: () => import('../views/LoginPage.vue'),
       meta: {
         auth: false
       }
+    },
+    {
+      path: '/',
+      component: HomeView,
+      meta: {
+        auth: true
+      },
+      children: [
+        {
+          path: '',
+          name: 'home',
+          component: () => import('../views/pages/overview.vue')
+        },
+        {
+          path: 'namespace',
+          name: 'namespace',
+          component: () => import('../views/pages/namespace.vue')
+        }
+      ]
     }
   ]
 })
