@@ -11,11 +11,13 @@ const security = useSecurityStore()
  * @param config
  */
 export const request = async <T>(config: RequestConfig) => {
-  const response = await fetch(baseUrl + config.uri, {
+  const url = baseUrl + config.uri
+  const init: RequestInit = {
     method: 'POST',
     headers: getHeaders(config),
     body: JSON.stringify(config.data)
-  })
+  }
+  const response = await fetch(url, init)
   const resp = await response.json()
   return handleResult(config, resp as Result<T>)
 }

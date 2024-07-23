@@ -1,19 +1,30 @@
 spring:
+  profiles:
+    active: dev
   redis:
-    database: 7
-    host: 127.0.0.1
-    password: 11111
-    port: 6379
+    database: 8
+    host: 124.222.25.145
+    password: testpassWord
+    port: 6378
     timeout: 60s
-
+  r2dbc:
+    url: r2dbcs:mysql://192.168.1.129:3306/owl
+    username: root
+    password: public2022
+  jpa:
+    show-sql: true # 日志打印 SQL
+    properties:
+      hibernate:
+        format_sql: true # 格式化日志 SQL
 owl-job:
   dashboard:
     password: admin
-    allowed-origins: http://localhost:5173
+    allowed-origins:
+      - http://localhost:5173
 
 sa-token: #SaTokenConfig
   # token 名称（同时也是 cookie 名称）
-  token-name: owl:job:token
+  token-name: owl-job-token
   # token 有效期（单位：秒） 默认30天，-1 代表永久有效
   timeout: 2592000
   # token 最低活跃频率（单位：秒），如果 token 超过此时间没有访问系统就会被冻结，默认-1 代表不限制，永不冻结

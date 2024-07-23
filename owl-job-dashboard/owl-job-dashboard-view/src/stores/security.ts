@@ -20,7 +20,7 @@ function storeSetup() {
     name: '',
     value: ''
   })
-  const authed = computed(() => token.value.name && token.value.value)
+  const authed = computed(() => !!(token.value.name && token.value.value))
   return {
     token,
     authed

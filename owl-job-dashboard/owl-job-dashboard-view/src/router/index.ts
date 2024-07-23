@@ -1,8 +1,39 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import HomeView from '../views/HomePage.vue'
 import { useSecurityStore } from '@/stores/security'
+import { Document, Menu as IconMenu } from '@element-plus/icons-vue'
 
 let security: ReturnType<typeof useSecurityStore>
+
+//mainRoute
+export const mainRoute: RouteRecordRaw = {
+  path: '/',
+  component: HomeView,
+  meta: {
+    auth: true
+  },
+  children: [
+    {
+      path: '',
+      name: 'home',
+      component: () => import('../views/pages/overview.vue'),
+      meta: {
+        icon: IconMenu,
+        title: 'menu.overview'
+      }
+    },
+    {
+      path: 'namespace',
+      name: 'namespace',
+      component: () => import('../views/pages/namespace.vue'),
+      meta: {
+        icon: Document,
+        title: 'menu.namespace'
+      }
+    }
+  ]
+}
+//createRouter
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -14,30 +45,12 @@ const router = createRouter({
         auth: false
       }
     },
-    {
-      path: '/',
-      component: HomeView,
-      meta: {
-        auth: true
-      },
-      children: [
-        {
-          path: '',
-          name: 'home',
-          component: () => import('../views/pages/overview.vue')
-        },
-        {
-          path: 'namespace',
-          name: 'namespace',
-          component: () => import('../views/pages/namespace.vue')
-        }
-      ]
-    }
+    mainRoute
   ]
 })
 //路由水位
 router.beforeEach((to, from, next) => {
-  if (to.meta?.auth || securityLazyLoad()?.authed) {
+  if (!to.meta?.auth || securityLazyLoad()?.authed) {
     next()
     return
   }
@@ -46,10 +59,10 @@ router.beforeEach((to, from, next) => {
 
 //懒加载 security store
 function securityLazyLoad() {
-  if (security != null) {
+  if (security) {
     return security
   }
-  security = useSecurityStore()
+  return (security = useSecurityStore())
 }
 
 export default router

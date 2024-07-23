@@ -8,7 +8,9 @@ public interface QueueNames {
 
     String PREFIX = "timed:job";
 
-    String JOB_CONF_PREFIX = PREFIX + ":(inf)";
+    String CONF_PREFIX = PREFIX + ":(inf)";
 
-    String JOB_QUEUE_PREFIX = PREFIX + ":(queue)";
+    String QUEUE_PREFIX = PREFIX + ":(queue)";
+
+    String NAMESPACE = PREFIX + ":(namespace)";
 }

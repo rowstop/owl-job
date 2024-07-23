@@ -34,6 +34,7 @@ public class OwlJobTemplate implements IOwlJobTemplate {
      * jobExecutor 任务执行器
      * jobConfigRMap redisson 任务配置map 用于获取任务数据
      */
+    private final String namespace;
     private final RedissonClient redissonClient;
     private final RBlockingQueue<String> blockingQueue;
     private final RDelayedQueue<String> delayedQueue;
@@ -59,10 +60,10 @@ public class OwlJobTemplate implements IOwlJobTemplate {
     public OwlJobTemplate(OwlJobConfig config, RedissonClient redissonClient, @Nullable IOwlJobExecutor executor) {
         //获取全局命名空间
         @NonNull String namespace = config.getNamespace();
-        redissonClient.getSet(QueueNames.JOB_CONF_PREFIX).add(namespace);
+        this.namespace = namespace;
         this.redissonClient = redissonClient;
-        this.jobConfigRMap = redissonClient.getMap(QueueNames.JOB_CONF_PREFIX + ":" + namespace);
-        this.blockingQueue = redissonClient.getBlockingQueue(QueueNames.JOB_QUEUE_PREFIX + ":" + namespace);
+        this.jobConfigRMap = redissonClient.getMap(QueueNames.CONF_PREFIX + ":" + namespace);
+        this.blockingQueue = redissonClient.getBlockingQueue(QueueNames.QUEUE_PREFIX + ":" + namespace);
         this.delayedQueue = redissonClient.getDelayedQueue(this.blockingQueue);
         this.jobExecutor = executor;
         this.execCorrectionMills = config.getExecCorrectionMills();
@@ -191,6 +192,7 @@ public class OwlJobTemplate implements IOwlJobTemplate {
         running = true;
         //初始化消费者线程（常驻线程） 
         consumerThread = new Thread(() -> {
+            redissonClient.getScoredSortedSet(QueueNames.NAMESPACE).add(System.currentTimeMillis(), namespace);
             //循环获取定时任务 并交由任务执行器执行
             while (running) {
                 String router;
@@ -226,6 +228,8 @@ public class OwlJobTemplate implements IOwlJobTemplate {
         //关闭 redisson client
         if (!redissonClient.isShutdown() && !redissonClient.isShuttingDown()) {
             try {
+                redissonClient.getScoredSortedSet(QueueNames.NAMESPACE)
+                        .remove(namespace);
                 this.redissonClient.shutdown();
             } catch (Exception ignore) {
             }

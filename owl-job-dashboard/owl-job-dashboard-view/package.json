@@ -16,8 +16,9 @@
     "element-plus": "^2.7.7",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
-    "sass": "^1.77.8",
+    "sass": "1.77.6",
     "vue": "^3.4.29",
+    "vue-i18n": "^9.13.1",
     "vue-router": "^4.3.3"
   },
   "devDependencies": {
@@ -36,6 +37,7 @@
     "unplugin-auto-import": "^0.18.0",
     "unplugin-vue-components": "^0.27.3",
     "vite": "^5.3.1",
+    "vite-plugin-svg-icons": "^2.0.1",
     "vue-tsc": "^2.0.21"
   }
 }

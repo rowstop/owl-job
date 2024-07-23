@@ -1,0 +1,15 @@
+server:
+  port: 8081
+spring:
+  profiles:
+    active: dev
+  redis:
+    database: 8
+    host: 124.222.25.145
+    password: testpassWord
+    port: 6378
+    timeout: 60s
+owl-job:
+  config:
+    namespace: spring-boot-example
+    

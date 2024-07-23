@@ -5,10 +5,11 @@ import vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: 'owl',
+  base: '/owl/',
   plugins: [
     vue(),
     // ...
@@ -25,6 +26,14 @@ export default defineConfig({
           importStyle: 'sass'
         })
       ]
+    }),
+    //svg icon
+    createSvgIconsPlugin({
+      // 指定需要缓存的图标文件夹
+      iconDirs: [fileURLToPath(new URL('./src/assets/svg', import.meta.url))],
+      // 指定symbolId格式
+      symbolId: 'OwlIcon-[dir]-[name]',
+      inject: 'body-last'
     })
   ],
   resolve: {
