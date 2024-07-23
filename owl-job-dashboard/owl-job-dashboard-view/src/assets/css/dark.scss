@@ -1,0 +1,12 @@
+// only scss variables
+@use "global" as *;
+
+$--colors: (
+        "primary": (
+                "base": $owl-color-primary,
+        ),
+);
+
+@forward "element-plus/theme-chalk/src/dark/var.scss" with (
+  $colors: $--colors
+);

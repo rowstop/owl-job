@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import I18nTool from './I18nTool.vue'
-import OutsideLink from '@/components/container/tools/OutsideLink.vue'
+import OutsideLink from './OutsideLink.vue'
+import DarkTool from './DarkTool.vue'
 </script>
 
 <template>
   <div class="tools">
+    <dark-tool />
     <i18n-tool />
     <outside-link icon="logo-github" link="https://github.com/rowstop/owl-job" title="github" />
     <outside-link

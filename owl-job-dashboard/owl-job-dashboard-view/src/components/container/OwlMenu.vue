@@ -3,7 +3,7 @@ import { Expand, Fold } from '@element-plus/icons-vue'
 import { type Component, markRaw, ref, watch } from 'vue'
 import router, { mainRoute } from '@/router'
 import type { RouteRecordRaw } from 'vue-router'
-import type { MenuItemInfo } from './model'
+import type { MenuItemInfo } from '../types/menu'
 import MenuItem from '@/components/container/MenuItem.vue'
 
 const menus = ref<MenuItemInfo[]>([])

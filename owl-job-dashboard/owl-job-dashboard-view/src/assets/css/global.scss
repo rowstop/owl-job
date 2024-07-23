@@ -1,17 +1,14 @@
-//colors
 $owl-color-primary: #ee0c48;
 
-//radius
-$owl-card-radius: 20;
+body {
+  margin: 0;
+  padding: 0;
 
-@forward 'element-plus/theme-chalk/src/common/var.scss' with (
-  $colors: (
-    'primary': (
-      'base': $owl-color-primary,
-    ),
-  ),
-);
-
-:export {
-  owl-color-primary: $owl-color-primary
+  #app {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
 }

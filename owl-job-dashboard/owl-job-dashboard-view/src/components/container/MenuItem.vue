@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { type PropType } from 'vue'
-import type { MenuItemInfo } from '@/components/container/model'
+import type { MenuItemInfo } from '../types/menu'
 
 defineProps({
   menus: {

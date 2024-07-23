@@ -4,7 +4,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 import type { LoginParam } from '@/api/security/model'
 import { login } from '@/api/security'
 import { throttle } from '@/util'
-import OwlIcon from '@/components/OwlIcon.vue'
+import OwlIcon from '@/components/tools/OwlIcon.vue'
 import { useSecurityStore } from '@/stores/security'
 import router from '@/router'
 
@@ -48,16 +48,18 @@ const doLogin = throttle(() => {
         <owl-icon class="logo" name="logo-logo" />
         <el-form ref="loginForm" :model="loginParam" :rules="loginRules" label-width="auto">
           <el-form-item prop="username">
-            <el-input v-model="loginParam.username" placeholder="请输入用户名" />
+            <el-input v-model="loginParam.username" :placeholder="$t('login.username')" />
           </el-form-item>
           <el-form-item prop="password">
-            <el-input v-model="loginParam.password" placeholder="请输入密码" />
+            <el-input v-model="loginParam.password" :placeholder="$t('login.password')" />
           </el-form-item>
           <el-form-item>
-            <el-checkbox v-model="rememberMe" label="记住登录状态" />
+            <el-checkbox v-model="rememberMe" :label="$t('login.remember')" />
           </el-form-item>
         </el-form>
-        <el-button class="login-button" type="primary" @click="doLogin">登录</el-button>
+        <el-button class="login-button" type="primary" @click="doLogin"
+          >{{ $t('login.loginButton') }}
+        </el-button>
       </div>
     </div>
   </div>
