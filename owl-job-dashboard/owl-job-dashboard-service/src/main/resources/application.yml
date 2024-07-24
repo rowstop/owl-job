@@ -1,9 +1,8 @@
 spring:
   redis:
-    database: 7
-    host: 124.222.25.145
-    password: testpassWord
-    port: 6378
+    database: 0
+    host: 127.0.0.1
+    port: 6379
     timeout: 60s
 
 owl-job:
