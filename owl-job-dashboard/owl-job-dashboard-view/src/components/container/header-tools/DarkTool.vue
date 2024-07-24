@@ -1,10 +1,8 @@
 <script lang="ts" setup>
 import { useDark, useToggle } from '@vueuse/core'
 import { Moon, Sunny } from '@element-plus/icons-vue'
-import global from '@/assets/css/global.module.scss'
 
 const isDark = useDark()
-console.log(global)
 const toggleDark = useToggle(isDark)
 </script>
 

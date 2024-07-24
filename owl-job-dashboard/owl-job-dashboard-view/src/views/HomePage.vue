@@ -3,16 +3,16 @@ import OwlMenu from '@/components/container/OwlMenu.vue'
 </script>
 
 <template>
-  <el-container class="owl-container">
+  <el-container>
     <el-aside width="auto">
       <el-scrollbar>
         <owl-menu />
       </el-scrollbar>
     </el-aside>
     <el-main>
-      <el-scrollbar>
-        <router-view />
-      </el-scrollbar>
+      <!--      <el-scrollbar>-->
+      <router-view />
+      <!--      </el-scrollbar>-->
     </el-main>
   </el-container>
 </template>

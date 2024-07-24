@@ -17,7 +17,7 @@ public class PageParam {
     /**
      * 当前页码
      */
-    private int page = 0;
+    private int current = 1;
 
     /**
      * 当前页数据条数

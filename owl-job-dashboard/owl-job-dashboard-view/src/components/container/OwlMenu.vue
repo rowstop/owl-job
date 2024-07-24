@@ -12,7 +12,6 @@ watch(
   () => router.getRoutes(),
   () => {
     menus.value = menuRender('/', mainRoute.children)
-    console.log(menus.value)
   },
   {
     immediate: true

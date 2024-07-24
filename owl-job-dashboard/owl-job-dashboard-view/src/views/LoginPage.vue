@@ -30,7 +30,6 @@ const doLogin = throttle(() => {
       return
     }
     login(loginParam.value).then((result) => {
-      console.log(result)
       const data = result.data
       security.token = {
         name: data.tokenName,

@@ -1,13 +1,21 @@
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue'
-import { page } from '@/api/namespace'
 
 import type { NamespaceVO } from '@/api/namespace/model'
-import OwlTablePage from '@/components/tools/OwlTablePage.vue'
+import PageContainer from '@/components/tools/PageContainer.vue'
+import Pagination from '@/components/tools/Pagination.vue'
+
+import { page } from '@/api/namespace'
 
 const pageParam = ref<PageParam>({
-  page: 1,
+  current: 1,
   size: 20
+})
+
+const pageInfo = ref<PageInfo>({
+  current: 1,
+  size: 20,
+  total: 0
 })
 
 const pageResult = ref<Page<NamespaceVO>>()
@@ -15,17 +23,40 @@ const pageResult = ref<Page<NamespaceVO>>()
 onMounted(() => pageInit())
 
 const pageInit = () => {
-  page(pageParam.value)
-    .then((result) => (pageResult.value = result.data))
-    .then(() => console.log(pageResult.value))
+  page(pageParam.value).then((result) => {
+    const data = result.data
+    pageResult.value = data
+    pageInfo.value = {
+      ...pageInfo.value,
+      current: data.pageable.pageNumber,
+      total: data.totalElements
+    }
+  })
+}
+
+/**
+ * 重新加载数据
+ * @param param
+ */
+const reload = (param: PageParam) => {
+  pageParam.value = param
+  pageInit()
 }
 </script>
 
 <template>
-  <div>
-    <p>1111</p>
-    <owl-table-page />
-  </div>
+  <page-container>
+    <template #search> </template>
+    <template v-slot="data">
+      <el-table :data="pageResult?.content" :height="data.height" stripe>
+        <el-table-column label="名称" prop="name" />
+        <el-table-column label="注册时间" prop="time" />
+      </el-table>
+    </template>
+    <template #footer>
+      <pagination v-model="pageInfo" @reload="reload" />
+    </template>
+  </page-container>
 </template>
 
 <style scoped></style>

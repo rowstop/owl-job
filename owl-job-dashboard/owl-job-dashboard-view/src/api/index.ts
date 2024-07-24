@@ -65,7 +65,7 @@ function getHeaders(config: RequestConfig) {
   const authed = security.authed
   //如果未登录但是接口需要登录 则直接调转到登录页面
   if (!authed && (undefined == config.auth || config.auth)) {
-    router.push('/login').catch((e) => console.log('路由跳转失败', e))
+    router.push('/login').catch((e) => console.error('路由跳转失败', e))
     throw new Error('need login,redirect to login')
   }
   //如果已登录 则设置 token 头信息

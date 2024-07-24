@@ -25,7 +25,7 @@ public class NamespaceController {
     @PostMapping("/page")
     public Mono<SaResult> page(@RequestBody PageParam param) {
         return namespaceService.page(
-                PageRequest.of(param.getPage(), param.getSize())
+                PageRequest.of(param.getCurrent(), param.getSize())
         ).map(SaResult::data);
     }
 }

@@ -6,7 +6,7 @@ interface ImportMetaEnv {
 
 //分页查询条件
 interface PageParam {
-  page: number
+  current: number
   size: number
 }
 
@@ -14,20 +14,18 @@ interface PageParam {
 interface Page<T> {
   content: T[]
   totalPages: number
-  size: number
-  empty: boolean
-  first: boolean
-  last: boolean
-  number: number
   pageable: {
-    offset: number
     pageNumber: number
     pageSize: number
-    paged: boolean
   }
-  numberOfElements: number
-  sort: { sorted: boolean; unsorted: boolean; empty: boolean }
   totalElements: number
+}
+
+//分页数据详情 用于分页工具
+interface PageInfo {
+  current: number
+  size: number
+  total: number
 }
 
 // 大整形数字

@@ -24,7 +24,7 @@
             <artifactId>owl-job-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+
         <!--     redisson   -->
         <dependency>
             <groupId>org.redisson</groupId>
@@ -38,6 +38,11 @@
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>com.fasterxml.jackson.datatype</groupId>-->
+<!--            <artifactId>jackson-datatype-jsr310</artifactId>-->
+<!--        </dependency>-->
+        <!--    r2dbc    -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-r2dbc</artifactId>
@@ -67,7 +72,7 @@
             <version>${sa-token.version}</version>
         </dependency>
 
-        
+
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
