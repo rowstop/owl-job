@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import PageContainer from '@/components/tools/PageContainer.vue'
+import Page from '@/components/container/Page.vue'
 </script>
 
 <template>
-  <page-container>
+  <page>
     <div class="flex flex-wrap gap-4">
       <el-card
         v-for="item in 200"
@@ -14,7 +14,7 @@ import PageContainer from '@/components/tools/PageContainer.vue'
         {{ item }}Always
       </el-card>
     </div>
-  </page-container>
+  </page>
 </template>
 
 <style scoped></style>

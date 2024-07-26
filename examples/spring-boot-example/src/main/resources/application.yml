@@ -1,6 +1,8 @@
 server:
   port: 8081
 spring:
+  application:
+    name: spring-boot-example
   profiles:
     active: dev
   redis:
@@ -10,5 +12,5 @@ spring:
     timeout: 60s
 owl-job:
   config:
-    namespace: spring-boot-example
+    namespace: ${spring.application.name}
     

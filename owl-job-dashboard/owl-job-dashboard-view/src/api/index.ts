@@ -28,9 +28,16 @@ export const request = async <T>(config: RequestConfig) => {
  * @param result 响应结果
  */
 function handleResult<T>(config: RequestConfig, result: Result<T>) {
-  const fail = config.fail
   let code
-  if (!result || 200 === (code = result.code) || !fail) {
+  if (!result || 200 === (code = result.code)) {
+    return result
+  }
+  if (code === 1) {
+    toLoginPage()
+    return result
+  }
+  const fail = config.fail
+  if (!fail) {
     return result
   }
   //if function
@@ -65,8 +72,8 @@ function getHeaders(config: RequestConfig) {
   const authed = security.authed
   //如果未登录但是接口需要登录 则直接调转到登录页面
   if (!authed && (undefined == config.auth || config.auth)) {
-    router.push('/login').catch((e) => console.error('路由跳转失败', e))
-    throw new Error('need login,redirect to login')
+    toLoginPage()
+    return {}
   }
   //如果已登录 则设置 token 头信息
   if (authed) {
@@ -74,4 +81,9 @@ function getHeaders(config: RequestConfig) {
     headers[name] = value
   }
   return headers
+}
+
+function toLoginPage() {
+  router.push('/login').catch((e) => console.error('路由跳转失败', e))
+  throw new Error('need login,redirect to login')
 }

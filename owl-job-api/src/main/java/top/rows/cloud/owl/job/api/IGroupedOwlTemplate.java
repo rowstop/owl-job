@@ -53,6 +53,29 @@ public interface IGroupedOwlTemplate {
         return delegate().removeAsync(group(), id);
     }
 
+
+    /**
+     * 消息是否已存在
+     *
+     * @param id 任务 id
+     * @return 是否已存在
+     */
+    default boolean contains(String id) {
+        return delegate().contains(group(), id);
+    }
+
+
+    /**
+     * 异步判断是否存在
+     *
+     * @param id 任务 id
+     * @return 是否已存在
+     */
+    default CompletionStage<Boolean> containsAsync(String id) {
+        return delegate().containsAsync(group(), id);
+    }
+    
+
     /**
      * 任务分组组名
      *

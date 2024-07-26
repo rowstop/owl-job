@@ -16,6 +16,13 @@ import java.time.LocalDateTime;
 @ToString
 @Accessors(chain = true)
 public class NamespaceVO {
+    /**
+     * 命名空间名称
+     */
     private String name;
+
+    /**
+     * 命名空间注册时间
+     */
     private LocalDateTime time;
 }

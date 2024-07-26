@@ -1,4 +1,4 @@
-package top.rows.cloud.owl.job.core;
+package top.rows.cloud.owl.job.api;
 
 import lombok.NonNull;
 
@@ -6,11 +6,11 @@ import lombok.NonNull;
  * @author 张治保
  * @since 2024/7/16
  */
-public class OwlJobHelper {
+public interface OwlJobHelper {
     /**
      * 任务路由 key 分隔符
      */
-    private static final char ROUTER_CONJUNCTION = '\n';
+    char ROUTER_CONJUNCTION = '\n';
 
     /**
      * 获取路由 key
@@ -20,7 +20,7 @@ public class OwlJobHelper {
      * @param taskId    任务 id
      * @return 任务路由 key
      */
-    public static String router(@NonNull String groupName, @NonNull String taskId) {
+    static String router(@NonNull String groupName, @NonNull String taskId) {
         return groupName + ROUTER_CONJUNCTION + taskId;
     }
 
@@ -30,7 +30,7 @@ public class OwlJobHelper {
      * @param router 任务路由
      * @return 任务分组
      */
-    public static String[] groupAndTaskIdFromRouter(@NonNull String router) {
+    static String[] groupAndTaskIdFromRouter(@NonNull String router) {
         int endIndex = router.indexOf(ROUTER_CONJUNCTION);
         return new String[]{
                 router.substring(0, endIndex),

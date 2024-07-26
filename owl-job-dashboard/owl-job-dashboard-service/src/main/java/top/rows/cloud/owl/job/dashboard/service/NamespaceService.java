@@ -1,8 +1,8 @@
 package top.rows.cloud.owl.job.dashboard.service;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Mono;
+import top.rows.cloud.owl.job.dashboard.model.base.Page;
 import top.rows.cloud.owl.job.dashboard.model.vo.NamespaceVO;
 
 /**

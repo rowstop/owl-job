@@ -14,9 +14,10 @@ const searchHeight = ref(0)
 const footerHeight = ref(0)
 
 const mainHeight = computed(() => {
-  console.log(
-    `${containerHeight.value} - ${searchHeight.value} - ${footerHeight.value} = ${containerHeight.value - searchHeight.value - footerHeight.value}`
-  )
+  console.log('containerHeight=' + containerHeight.value)
+  console.log('searchHeight=' + searchHeight.value)
+  console.log('footerHeight=' + footerHeight.value)
+  console.log(containerHeight.value - searchHeight.value - footerHeight.value)
   return containerHeight.value - searchHeight.value - footerHeight.value
 })
 //计算 container 及相关组件高度
@@ -33,6 +34,7 @@ onMounted(() => {
     dispatch.push(footerHeight)
   }
   useResizeObserver(observerTargets, (entries) => {
+    console.log(entries)
     for (let order = 0; order < entries.length; order++) {
       dispatch[order].value = entries[order].contentRect.height
     }
@@ -42,10 +44,10 @@ onMounted(() => {
 
 <template>
   <el-container ref="container">
-    <el-header v-if="hashSearch" ref="search" height="">
+    <el-header v-if="hashSearch" ref="search">
       <slot name="search" />
     </el-header>
-    <el-main :style="{ height: mainHeight }">
+    <el-main :style="{ height: mainHeight + 'px' }">
       <el-scrollbar>
         <slot :height="mainHeight" />
       </el-scrollbar>

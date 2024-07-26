@@ -10,6 +10,7 @@ import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
 import top.rows.cloud.owl.job.api.IOwlJobExecutor;
 import top.rows.cloud.owl.job.api.IOwlJobTemplate;
+import top.rows.cloud.owl.job.api.OwlJobHelper;
 import top.rows.cloud.owl.job.api.model.IOwlJob;
 import top.rows.cloud.owl.job.api.model.QueueNames;
 import top.rows.cloud.owl.job.core.config.OwlJobConfig;
@@ -113,18 +114,6 @@ public class OwlJobTemplate implements IOwlJobTemplate {
     }
 
     /**
-     * 移除定时任务
-     *
-     * @param id 任务id
-     */
-    @Override
-    public final IOwlJob<Object> remove(@NonNull String group, @NonNull String id) {
-        String router = OwlJobHelper.router(group, id);
-        delayedQueue.remove(router);
-        return jobConfigRMap.remove(router);
-    }
-
-    /**
      * 异步添加定时任务
      *
      * @param job 定时任务配置
@@ -149,6 +138,18 @@ public class OwlJobTemplate implements IOwlJobTemplate {
     }
 
     /**
+     * 移除定时任务
+     *
+     * @param id 任务id
+     */
+    @Override
+    public final IOwlJob<Object> remove(@NonNull String group, @NonNull String id) {
+        String router = OwlJobHelper.router(group, id);
+        delayedQueue.remove(router);
+        return jobConfigRMap.remove(router);
+    }
+
+    /**
      * 异步移除定时任务
      *
      * @param id 任务 id
@@ -159,6 +160,27 @@ public class OwlJobTemplate implements IOwlJobTemplate {
         String router = OwlJobHelper.router(group, id);
         return delayedQueue.removeAsync(router)
                 .thenApply((_v) -> jobConfigRMap.remove(router));
+    }
+
+    @Override
+    public final boolean contains(String group, String id) {
+        return jobConfigRMap.containsKey(OwlJobHelper.router(group, id));
+    }
+
+    @Override
+    public final CompletionStage<Boolean> containsAsync(String group, String id) {
+        return jobConfigRMap.containsKeyAsync(OwlJobHelper.router(group, id));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public final <T> IOwlJob<T> getJobConfig(String router) {
+        return (IOwlJob<T>) jobConfigRMap.get(router);
+    }
+
+    @Override
+    public final void removeJobConfig(String router) {
+        jobConfigRMap.remove(router);
     }
 
     /**
@@ -178,7 +200,6 @@ public class OwlJobTemplate implements IOwlJobTemplate {
         return delayedQueue.deleteAsync()
                 .thenRun(jobConfigRMap::clear);
     }
-
 
     /**
      * 初始化方法
@@ -200,17 +221,13 @@ public class OwlJobTemplate implements IOwlJobTemplate {
                     router = blockingQueue.take();
                 } catch (InterruptedException | RedissonShutdownException ex) {
                     if (running) {
-                        log.error("线程终止,无法继续取出数据", ex);
+                        log.error("任务终止,无法继续取出数据", ex);
                     }
                     return;
                 }
                 //已获取到任务
                 //获取任务详情并删除原数据
-                IOwlJob<Object> job = jobConfigRMap.remove(router);
-                if (job == null) {
-                    continue;
-                }
-                jobExecutor.execAsync(this, router, job);
+                jobExecutor.execAsync(this, router);
             }
         });
         consumerThread.setDaemon(true);

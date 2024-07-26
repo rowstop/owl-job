@@ -2,10 +2,7 @@ package top.rows.cloud.owl.job.core;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import top.rows.cloud.owl.job.api.IOwlJobExecutor;
-import top.rows.cloud.owl.job.api.IOwlJobListener;
-import top.rows.cloud.owl.job.api.IOwlJobRunner;
-import top.rows.cloud.owl.job.api.IOwlJobTemplate;
+import top.rows.cloud.owl.job.api.*;
 import top.rows.cloud.owl.job.api.model.IOwlJob;
 import top.rows.cloud.owl.job.core.config.OwlJobConfig;
 import top.rows.cloud.owl.job.core.model.OwlJobParam;
@@ -67,22 +64,15 @@ public class OwlJobExecutor implements IOwlJobExecutor {
         return this;
     }
 
-    /**
-     * 执行任务
-     *
-     * @param template 任务管理器
-     * @param job      任务配置
-     * @param <T>      任务数据类型
-     */
     @Override
-    public final <T> void execAsync(IOwlJobTemplate template, String router, IOwlJob<T> job) {
-        executor.execute(() -> execTask(false, template, router, job));
+    public void execAsync(IOwlJobTemplate template, String router) {
+        executor.execute(() -> execTask(template, router));
     }
 
     @Override
-    public <T> CompletableFuture<Void> execAsyncFuture(IOwlJobTemplate template, String router, IOwlJob<T> job) {
+    public CompletableFuture<Void> execAsyncFuture(IOwlJobTemplate template, String router) {
         return CompletableFuture.runAsync(
-                () -> execTask(false, template, router, job),
+                () -> execTask(template, router),
                 executor
         );
     }
@@ -95,7 +85,11 @@ public class OwlJobExecutor implements IOwlJobExecutor {
         executor.shutdown();
     }
 
-    private <T> void execTask(boolean skipRepeat, IOwlJobTemplate template, String router, IOwlJob<T> job) {
+    private <T> void execTask(IOwlJobTemplate template, String router) {
+        IOwlJob<T> job = template.getJobConfig(router);
+        if (job == null) {
+            return;
+        }
         String[] groupAndTaskId = OwlJobHelper.groupAndTaskIdFromRouter(router);
         String group = groupAndTaskId[0];
         IOwlJobRunner<?> runner = groupListenerMap.get(group);
@@ -103,6 +97,39 @@ public class OwlJobExecutor implements IOwlJobExecutor {
             log.warn("done not have job runner for group:{}", group);
             return;
         }
+        //执行任务 如果失败则尝试重试
+        runRetry(runner, group, job);
+        //是否需要重复执行 下个执行周期不为空 即需要继续执行任务
+        IOwlJob<T> nextJob = job.next();
+        if (nextJob == null) {
+            //不需要执行则删除原配置
+            template.removeJobConfig(router);
+            return;
+        }
+        //异步执行
+        executor.execute(() -> {
+            IOwlJob<T> next = nextJob;
+            //需不需要 立即执行 
+            //当满足 当前时间大于等于下次执行时间时表示需要立即执行
+            //立即执行将在本地循环异步执行  
+            while (next != null && !LocalDateTime.now().isBefore(next.getTime())) {
+                IOwlJob<T> executingJob = next;
+                executor.execute(() -> runRetry(runner, group, executingJob));
+                next = next.next();
+            }
+            //如果下次执行数据为空 则表示不需要继续执行
+            if (next == null) {
+                //不需要执行则删除原配置
+                template.removeJobConfig(router);
+                return;
+            }
+            //当前时间小于执行时间 放到延迟队列里 延迟执行 
+            template.addAsync(group, next.setIdGenerator(() -> groupAndTaskId[1]));
+        });
+    }
+
+
+    private <T> void runRetry(IOwlJobRunner<?> runner, String group, IOwlJob<T> job) {
         // 执行定时任务
         //增加重试操作
         // 当前重试次数
@@ -124,29 +151,6 @@ public class OwlJobExecutor implements IOwlJobExecutor {
                 }
             }
         }
-        //是否需要重复执行 下个执行周期不为空 即需要继续执行任务
-        IOwlJob<T> nextJob;
-        if (skipRepeat || (nextJob = job.next()) == null) {
-            return;
-        }
-        //异步执行
-        executor.execute(() -> {
-            IOwlJob<T> next = nextJob;
-            //需不需要 立即执行 
-            //当满足 当前时间大于等于下次执行时间时表示需要立即执行
-            //立即执行将在本地循环异步执行  
-            while (next != null && !LocalDateTime.now().isBefore(next.getTime())) {
-                IOwlJob<T> executingJob = next;
-                executor.execute(() -> execTask(true, template, router, executingJob));
-                next = next.next();
-            }
-            //如果下次执行数据为空 则表示不需要继续执行
-            if (next == null) {
-                return;
-            }
-            //当前时间小于执行时间 放到延迟队列里 延迟执行 
-            template.addAsync(group, next.setIdGenerator(() -> groupAndTaskId[1]));
-        });
     }
 
     /**

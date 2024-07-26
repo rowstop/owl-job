@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 
 import type { NamespaceVO } from '@/api/namespace/model'
-import PageContainer from '@/components/tools/PageContainer.vue'
+import Page from '@/components/container/Page.vue'
 import Pagination from '@/components/tools/Pagination.vue'
 
 import { page } from '@/api/namespace'
@@ -28,8 +28,7 @@ const pageInit = () => {
     pageResult.value = data
     pageInfo.value = {
       ...pageInfo.value,
-      current: data.pageable.pageNumber,
-      total: data.totalElements
+      total: data.total
     }
   })
 }
@@ -45,10 +44,10 @@ const reload = (param: PageParam) => {
 </script>
 
 <template>
-  <page-container>
-    <template #search> </template>
+  <page>
+    <template #search></template>
     <template v-slot="data">
-      <el-table :data="pageResult?.content" :height="data.height" stripe>
+      <el-table :data="pageResult?.records" :height="data.height" stripe>
         <el-table-column label="名称" prop="name" />
         <el-table-column label="注册时间" prop="time" />
       </el-table>
@@ -56,7 +55,7 @@ const reload = (param: PageParam) => {
     <template #footer>
       <pagination v-model="pageInfo" @reload="reload" />
     </template>
-  </page-container>
+  </page>
 </template>
 
 <style scoped></style>

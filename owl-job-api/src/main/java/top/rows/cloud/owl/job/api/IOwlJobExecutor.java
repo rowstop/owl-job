@@ -2,7 +2,6 @@ package top.rows.cloud.owl.job.api;
 
 
 import lombok.NonNull;
-import top.rows.cloud.owl.job.api.model.IOwlJob;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -41,22 +40,18 @@ public interface IOwlJobExecutor {
     /**
      * 同步执行任务
      *
-     * @param template template
      * @param router   任务路由
-     * @param job      任务配置
-     * @param <T>      任务数据类型
+     * @param template 定时任务操作模板实例
      */
-    <T> void execAsync(IOwlJobTemplate template, String router, IOwlJob<T> job);
+    void execAsync(IOwlJobTemplate template, String router);
 
     /**
      * 异步执行任务
      *
      * @param template template
      * @param router   任务路由
-     * @param job      任务配置
-     * @param <T>      任务数据类型
      */
-    <T> CompletableFuture<Void> execAsyncFuture(IOwlJobTemplate template, String router, IOwlJob<T> job);
+    CompletableFuture<Void> execAsyncFuture(IOwlJobTemplate template, String router);
 
     /**
      * 关闭执行器

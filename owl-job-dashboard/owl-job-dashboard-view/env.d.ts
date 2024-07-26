@@ -12,13 +12,10 @@ interface PageParam {
 
 //分页查询结果
 interface Page<T> {
-  content: T[]
-  totalPages: number
-  pageable: {
-    pageNumber: number
-    pageSize: number
-  }
-  totalElements: number
+  //总数据条数
+  total: number
+  //当前页数据列表
+  records: T[]
 }
 
 //分页数据详情 用于分页工具
