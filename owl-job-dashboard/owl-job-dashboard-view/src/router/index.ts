@@ -16,7 +16,7 @@ export const mainRoute: RouteRecordRaw = {
     {
       path: '',
       name: 'home',
-      component: () => import('../views/pages/overview.vue'),
+      component: () => import('../views/pages/Overview.vue'),
       meta: {
         icon: IconMenu,
         title: 'menu.overview'
@@ -25,10 +25,19 @@ export const mainRoute: RouteRecordRaw = {
     {
       path: 'namespace',
       name: 'namespace',
-      component: () => import('../views/pages/namespace.vue'),
+      component: () => import('../views/pages/Namespace.vue'),
       meta: {
         icon: Document,
         title: 'menu.namespace'
+      }
+    },
+    {
+      path: 'job/log',
+      name: 'jobLog',
+      component: () => import('../views/pages/JobLog.vue'),
+      meta: {
+        icon: Document,
+        title: 'menu.jobLog'
       }
     }
   ]

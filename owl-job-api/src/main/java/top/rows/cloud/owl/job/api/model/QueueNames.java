@@ -6,11 +6,15 @@ package top.rows.cloud.owl.job.api.model;
  */
 public interface QueueNames {
 
-    String PREFIX = "timed:job";
+    String PREFIX = "owl:job";
 
     String CONF_PREFIX = PREFIX + ":(inf)";
 
     String QUEUE_PREFIX = PREFIX + ":(queue)";
 
     String NAMESPACE = PREFIX + ":(namespace)";
+
+    String DASHBOARD_EXITS = PREFIX + ":(dashboard)";
+
+    String JOB_EXEC_RESULT = PREFIX + ":(exec:result)";
 }

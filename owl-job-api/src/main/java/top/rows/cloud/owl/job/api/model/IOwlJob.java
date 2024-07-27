@@ -46,4 +46,11 @@ public interface IOwlJob<T> extends Serializable {
      */
     @Nullable
     IOwlJob<T> next();
+
+    /**
+     * 把重试次数+1 并返回
+     */
+    int incrementAndGetRetry();
+
+
 }

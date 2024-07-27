@@ -13,4 +13,5 @@ spring:
 owl-job:
   config:
     namespace: ${spring.application.name}
+    retry-attempts: 1
     

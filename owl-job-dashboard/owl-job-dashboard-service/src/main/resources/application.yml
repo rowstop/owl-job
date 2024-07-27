@@ -39,4 +39,11 @@ sa-token: #SaTokenConfig
   # 是否输出操作日志 
   is-log: true
 
-    
+
+logging:
+  level:
+    root: debug
+#    org.hibernate.SQL: debug
+#    org.hibernate.engine.QueryParameters: debug
+#    org.hibernate.engine.query.HQLQueryPlan: debug
+#    org.hibernate.type.descriptor.sql.BasicBinder: trace

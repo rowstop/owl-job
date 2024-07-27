@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import top.rows.cloud.owl.job.api.*;
 import top.rows.cloud.owl.job.api.model.IOwlJob;
 import top.rows.cloud.owl.job.core.config.OwlJobConfig;
+import top.rows.cloud.owl.job.core.dashboard.OwlJobDashboard;
 import top.rows.cloud.owl.job.core.model.OwlJobParam;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -21,6 +21,12 @@ import java.util.concurrent.ExecutorService;
  */
 @Slf4j
 public class OwlJobExecutor implements IOwlJobExecutor {
+
+    /**
+     * 所属命名空间
+     */
+    private final String namespace;
+
     /**
      * 执行任务的线程池
      */
@@ -41,6 +47,7 @@ public class OwlJobExecutor implements IOwlJobExecutor {
     private final Map<String, IOwlJobRunner<?>> groupListenerMap = new HashMap<>();
 
     public OwlJobExecutor(OwlJobConfig config) {
+        this.namespace = config.getNamespace();
         this.executor = config.getExecutorThreadPool().toExecutorService();
         this.maxFailRetry = config.getRetryAttempts();
         this.retryInterval = config.getRetryInterval().toMillis();
@@ -97,8 +104,12 @@ public class OwlJobExecutor implements IOwlJobExecutor {
             log.warn("done not have job runner for group:{}", group);
             return;
         }
+        String taskId = groupAndTaskId[1];
         //执行任务 如果失败则尝试重试
-        runRetry(runner, group, job);
+        //失败不需要继续执行 已重新提交至任务队列
+        if (runRetry(template, runner, taskId, group, job)) {
+            return;
+        }
         //是否需要重复执行 下个执行周期不为空 即需要继续执行任务
         IOwlJob<T> nextJob = job.next();
         if (nextJob == null) {
@@ -106,51 +117,54 @@ public class OwlJobExecutor implements IOwlJobExecutor {
             template.removeJobConfig(router);
             return;
         }
-        //异步执行
-        executor.execute(() -> {
-            IOwlJob<T> next = nextJob;
-            //需不需要 立即执行 
-            //当满足 当前时间大于等于下次执行时间时表示需要立即执行
-            //立即执行将在本地循环异步执行  
-            while (next != null && !LocalDateTime.now().isBefore(next.getTime())) {
-                IOwlJob<T> executingJob = next;
-                executor.execute(() -> runRetry(runner, group, executingJob));
-                next = next.next();
-            }
-            //如果下次执行数据为空 则表示不需要继续执行
-            if (next == null) {
-                //不需要执行则删除原配置
-                template.removeJobConfig(router);
-                return;
-            }
-            //当前时间小于执行时间 放到延迟队列里 延迟执行 
-            template.addAsync(group, next.setIdGenerator(() -> groupAndTaskId[1]));
-        });
+        //需要重复执行 则直接存放值任务队列
+        template.addAsync(group, nextJob.setIdGenerator(() -> groupAndTaskId[1]));
     }
 
+    /**
+     * 执行任务 并实现失败重试
+     * 1. 如果任务执行失败 并且未超过最大重试次数 返回 true
+     * 2. 否则（任务执行成功 或已超过最大重试次数） 返回 false
+     *
+     * @return 任务是否已重新存放至任务队列
+     */
 
-    private <T> void runRetry(IOwlJobRunner<?> runner, String group, IOwlJob<T> job) {
+    private <T> boolean runRetry(
+            IOwlJobTemplate template,
+            IOwlJobRunner<?> runner,
+            String group,
+            String taskId,
+            IOwlJob<T> job) {
         // 执行定时任务
         //增加重试操作
         // 当前重试次数
-        int retry = 0;
         // 重试间隔
-        while (retry < maxFailRetry) {
-            try {
-                run(runner, job);
-                break;
-            } catch (Exception e) {
-                retry++;
-                log.error("重试次数：{}", retry);
-                log.error("定时任务执行失败,任务组名：{},任务数据：{}", group, job);
-                log.error("失败原因", e);
-                try {
-                    Thread.sleep(retry * retryInterval);
-                } catch (InterruptedException interruptedException) {
-                    log.error("重试异常", interruptedException);
-                }
-            }
+        Throwable error = null;
+        try {
+            run(runner, job);
+        } catch (Throwable e) {
+            error = e;
         }
+        //上报执行结果
+        OwlJobDashboard.reportExecResult(namespace, group, taskId, job, error);
+        int curRetry;
+        //如果没有异常 或重试次数大于等于最大重试次数  则不需要继续处理
+        if (error == null || (curRetry = job.incrementAndGetRetry()) >= maxFailRetry) {
+            return false;
+        }
+
+        //以下为异常重试逻辑
+        log.error("重试次数：{}", curRetry);
+        log.error("定时任务执行失败,任务组名：{},任务数据：{}", group, job);
+        log.error("失败原因", error);
+        //休眠一定时间后 重新添加到任务队列
+        try {
+            Thread.sleep(curRetry * retryInterval);
+        } catch (InterruptedException interruptedException) {
+            log.error("重试异常", interruptedException);
+        }
+        template.addAsync(group, job.setIdGenerator(() -> taskId));
+        return true;
     }
 
     /**

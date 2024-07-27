@@ -10,6 +10,7 @@ export interface ILocal extends I18NMSg {
   menu: {
     overview: string
     namespace: string
+    jobLog: string
   }
 }
 
@@ -30,7 +31,8 @@ export const messages: Record<SupportLang, ILocal> = {
     },
     menu: {
       overview: '概况',
-      namespace: '命名空间'
+      namespace: '命名空间',
+      jobLog: '调度日志'
     }
   },
   en: {
@@ -42,7 +44,8 @@ export const messages: Record<SupportLang, ILocal> = {
     },
     menu: {
       overview: 'overview',
-      namespace: 'namespace'
+      namespace: 'namespace',
+      jobLog: 'execution log'
     }
   }
 }

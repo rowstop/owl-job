@@ -37,6 +37,9 @@ public class JobConfig {
                 System.out.println("运行时间：" + LocalDateTime.now());
                 System.out.println("预定时间：" + param.getTime());
                 System.out.println("响应参数：" + param.getParam());
+                if (param.getTime().getSecond() > 50) {
+                    throw new RuntimeException("seconds cannot greater than 50");
+                }
             }
         };
     }

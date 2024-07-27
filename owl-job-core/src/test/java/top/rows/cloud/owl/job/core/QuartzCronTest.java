@@ -4,12 +4,13 @@ import com.cronutils.builder.CronBuilder;
 import com.cronutils.model.Cron;
 import com.cronutils.model.CronType;
 import com.cronutils.model.definition.CronDefinitionBuilder;
-import com.cronutils.model.time.ExecutionTime;
 import com.cronutils.parser.CronParser;
 import org.junit.jupiter.api.Test;
+import top.rows.cloud.owl.job.core.model.OwlJob;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Optional;
 
 import static com.cronutils.model.field.expression.FieldExpressionFactory.always;
 import static com.cronutils.model.field.expression.FieldExpressionFactory.on;
@@ -24,9 +25,10 @@ public class QuartzCronTest {
     @Test
     void parseCron() {
         String cron = "1,5,9,20,39,48,59 * * * * ?";
-        Optional<ZonedDateTime> zonedDateTime = ExecutionTime.forCron(cronParser.parse(cron)).nextExecution(ZonedDateTime.now());
-        ZonedDateTime time = zonedDateTime.get();
-        System.out.println(time.toLocalDateTime());
+        LocalDateTime localDateTime = OwlJob.nextCronTime(ZonedDateTime.now(), cron);
+        System.out.println(localDateTime);
+        localDateTime = OwlJob.nextCronTime(localDateTime.atZone(ZoneId.systemDefault()), cron);
+        System.out.println(localDateTime);
     }
 
     @Test

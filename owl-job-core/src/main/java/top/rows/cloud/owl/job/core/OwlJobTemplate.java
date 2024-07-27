@@ -14,6 +14,7 @@ import top.rows.cloud.owl.job.api.OwlJobHelper;
 import top.rows.cloud.owl.job.api.model.IOwlJob;
 import top.rows.cloud.owl.job.api.model.QueueNames;
 import top.rows.cloud.owl.job.core.config.OwlJobConfig;
+import top.rows.cloud.owl.job.core.dashboard.OwlJobDashboard;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -58,7 +59,7 @@ public class OwlJobTemplate implements IOwlJobTemplate {
      * @param redissonClient redisson 客户端
      * @param executor       定时任务执行器
      */
-    public OwlJobTemplate(OwlJobConfig config, RedissonClient redissonClient, @Nullable IOwlJobExecutor executor) {
+    public OwlJobTemplate(@NonNull OwlJobConfig config, @NonNull RedissonClient redissonClient, @Nullable IOwlJobExecutor executor) {
         //获取全局命名空间
         @NonNull String namespace = config.getNamespace();
         this.namespace = namespace;
@@ -68,6 +69,8 @@ public class OwlJobTemplate implements IOwlJobTemplate {
         this.delayedQueue = redissonClient.getDelayedQueue(this.blockingQueue);
         this.jobExecutor = executor;
         this.execCorrectionMills = config.getExecCorrectionMills();
+        //设置 dashboard 工具使用的 redissonClient
+        OwlJobDashboard.setRedissonClient(redissonClient);
     }
 
     private static <T> String taskId(@NonNull IOwlJob<T> job) {

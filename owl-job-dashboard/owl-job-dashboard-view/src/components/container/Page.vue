@@ -44,17 +44,17 @@ onMounted(() => {
 
 <template>
   <el-container ref="container">
-    <el-header v-if="hashSearch" ref="search">
+    <div v-if="hashSearch" ref="search">
       <slot name="search" />
-    </el-header>
+    </div>
     <el-main :style="{ height: mainHeight + 'px' }">
       <el-scrollbar>
         <slot :height="mainHeight" />
       </el-scrollbar>
     </el-main>
-    <div v-if="hashFooter" ref="footer" class="base-box footer">
+    <el-footer v-if="hashFooter" ref="footer" class="base-box footer">
       <slot name="footer" />
-    </div>
+    </el-footer>
   </el-container>
 </template>
 

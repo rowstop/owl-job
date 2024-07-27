@@ -37,6 +37,7 @@ declare module 'vue' {
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
+    ElTag: typeof import('element-plus/es')['ElTag']
     Header: typeof import('./src/components/Header.vue')['default']
     HeaderTools: typeof import('./src/components/container/header-tools/index.vue')['default']
     HomeHeader: typeof import('./src/components/HomeHeader.vue')['default']
@@ -57,6 +58,7 @@ declare module 'vue' {
     Pagination: typeof import('./src/components/tools/Pagination.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    TablePage: typeof import('./src/components/container/TablePage.vue')['default']
     Tools: typeof import('./src/components/container/tools/index.vue')['default']
   }
 }

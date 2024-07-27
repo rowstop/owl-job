@@ -11,6 +11,7 @@ import top.rows.cloud.owl.job.api.model.IOwlJob;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -66,6 +67,11 @@ public class OwlJob<T> implements IOwlJob<T> {
     private Supplier<String> idGenerator;
 
     /**
+     * 当前重试次数
+     */
+    private int retry;
+
+    /**
      * cron 表达式的定时任务
      *
      * @param quartzCron quartz 格式的 cron 表达式
@@ -76,7 +82,7 @@ public class OwlJob<T> implements IOwlJob<T> {
         OwlJob<T> job = new OwlJob<>();
         job.cron = quartzCron;
         job.type = OwlJobType.CRON;
-        LocalDateTime nextTime = nextCronTime(quartzCron);
+        LocalDateTime nextTime = nextCronTime(ZonedDateTime.now(), quartzCron);
         if (nextTime == null) {
             throw new RuntimeException("cannot be exec job of cron: " + quartzCron);
         }
@@ -144,10 +150,10 @@ public class OwlJob<T> implements IOwlJob<T> {
      * @param quartzCron quartz格式的 cron 表达式
      * @return 下次执行时间
      */
-    private static LocalDateTime nextCronTime(String quartzCron) {
+    public static LocalDateTime nextCronTime(ZonedDateTime baseTime, String quartzCron) {
         ExecutionTime executionTime = ExecutionTime.forCron(parser().parse(quartzCron));
         return executionTime
-                .nextExecution(ZonedDateTime.now())
+                .nextExecution(baseTime)
                 .map(ZonedDateTime::toLocalDateTime)
                 .orElse(null);
     }
@@ -182,8 +188,13 @@ public class OwlJob<T> implements IOwlJob<T> {
             return copy(time.plusNanos(rateNanos));
         }
         //cron 表达式任务
-        LocalDateTime nextTime = nextCronTime(cron);
+        LocalDateTime nextTime = nextCronTime(time.atZone(ZoneId.systemDefault()), cron);
         return nextTime == null ? null : copy(nextTime);
+    }
+
+    @Override
+    public final int incrementAndGetRetry() {
+        return ++retry;
     }
 
     /**
