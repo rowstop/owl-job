@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { SupportLang } from '@/util/i18n/messages'
+import { SupportLang } from '@/util/i18n/model'
 import { useI18nStore } from '@/stores/i18n'
 import OwlIcon from '../../tools/OwlIcon.vue'
 

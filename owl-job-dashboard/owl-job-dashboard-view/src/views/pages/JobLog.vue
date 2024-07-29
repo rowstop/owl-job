@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import TablePage from '@/components/container/TablePage.vue'
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { page } from '@/api/jobLog'
 import type { JobLog } from '@/api/jobLog/model'
 
@@ -13,25 +13,85 @@ const pageData = ref<Page<JobLog>>({
   records: [],
   total: 0
 })
+
+const errorDrawer = reactive({
+  show: false,
+  error: ''
+})
+
 const reload = () => {
-  page(param.value).then((result) => (pageData.value = result.data))
+  page(param.value).then((result) => {
+    if (result.code === 200) {
+      pageData.value = result.data
+    }
+  })
+}
+
+const showError = (error?: string) => {
+  if (!error) {
+    return
+  }
+  errorDrawer.error = error
+  errorDrawer.show = true
 }
 </script>
 
 <template>
   <table-page v-model="param" :page="pageData" @reload="reload">
-    <el-table-column label="执行结果">
+    <el-table-column :label="$t('menu.jobLog.tableColumns.resultOfExecution')">
       <template #default="{ row }: { row: JobLog }">
-        <el-tag v-if="row.error" type="danger">失败</el-tag>
-        <el-tag v-else type="success">成功</el-tag>
+        <el-button v-if="row.error" size="small" type="danger" @click="showError(row.error)"
+          >{{ $t('menu.jobLog.tools.fail') }}
+        </el-button>
+        <el-button v-else size="small" type="success"
+          >{{ $t('menu.jobLog.tools.success') }}
+        </el-button>
       </template>
     </el-table-column>
-    <el-table-column label="命名空间" prop="namespace" show-overflow-tooltip />
-    <el-table-column label="任务分组" prop="jobGroup" show-overflow-tooltip />
-    <el-table-column label="任务Id" prop="taskId" show-overflow-tooltip />
-    <el-table-column label="执行时间" prop="execTime" show-overflow-tooltip />
-    <el-table-column label="设定时间" prop="settingTime" show-overflow-tooltip />
+    <el-table-column
+      :label="$t('menu.jobLog.tableColumns.namespace')"
+      prop="namespace"
+      show-overflow-tooltip
+    />
+    <el-table-column
+      :label="$t('menu.jobLog.tableColumns.group')"
+      prop="jobGroup"
+      show-overflow-tooltip
+    />
+    <el-table-column
+      :label="$t('menu.jobLog.tableColumns.taskId')"
+      prop="taskId"
+      show-overflow-tooltip
+    />
+    <el-table-column
+      :label="$t('menu.jobLog.tableColumns.execTime')"
+      prop="execTime"
+      show-overflow-tooltip
+    />
+    <el-table-column
+      :label="$t('menu.jobLog.tableColumns.settingTime')"
+      prop="settingTime"
+      show-overflow-tooltip
+    />
   </table-page>
+  <el-drawer
+    v-model="errorDrawer.show"
+    :title="$t('menu.jobLog.tools.failTitle')"
+    direction="rtl"
+    size="50%"
+  >
+    <el-scrollbar>
+      <pre>
+      <code class="error-box" v-text="errorDrawer.error" />
+      </pre>
+    </el-scrollbar>
+  </el-drawer>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.error-box {
+  display: table;
+  white-space: pre;
+  color: var(--el-color-danger);
+}
+</style>

@@ -63,26 +63,47 @@ public class OwlJobDashboard {
      * @return string 格式的异常信息
      */
     public static String errorToString(Throwable error) {
-        return errorToString(error, 1500);
+        return errorToString(error, 2);
     }
 
     /**
      * 异常转 string
      *
-     * @param error     异常
-     * @param maxLength 异常字符串的最大长度
+     * @param error        异常
+     * @param maxStraceDep 异常调用栈的最大长度
      * @return string 格式的异常信息
      */
-    public static String errorToString(Throwable error, int maxLength) {
+    public static String errorToString(Throwable error, int maxStraceDep) {
         if (error == null) {
             return null;
         }
         StringWriter sw = new StringWriter();
         try (PrintWriter pw = new PrintWriter(sw)) {
-            error.printStackTrace(pw);
+            writeShortenCause(null, error, maxStraceDep, pw);
         }
-        String errorString = sw.toString();
-        return errorString.substring(0, Math.min(errorString.length(), maxLength));
+        return sw.toString();
+    }
+
+
+    private static void writeShortenCause(String caption, Throwable cause, int maxDep, PrintWriter writer) {
+        if (caption != null) {
+            writer.print(caption);
+        }
+        writer.println(cause);
+        StackTraceElement[] trace = cause.getStackTrace();
+        int traceLength = trace.length - 1;
+        int curTrace = Math.min(maxDep - 1, traceLength);
+        for (int i = 0; i <= curTrace; i++) {
+            writer.println("\tat " + trace[i]);
+        }
+        if (curTrace < traceLength) {
+            writer.println("\t... " + (traceLength - curTrace) + "more");
+        }
+        Throwable causeCause = cause.getCause();
+        if (causeCause == null) {
+            return;
+        }
+        writeShortenCause("Caused by: ", causeCause, maxDep, writer);
     }
 
     /**

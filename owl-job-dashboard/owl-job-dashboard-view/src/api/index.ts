@@ -2,6 +2,7 @@ import { ElMessage } from 'element-plus'
 import { useSecurityStore } from '@/stores/security'
 import router from '@/router'
 import type { RequestConfig } from './model'
+import i18n from '@/util/i18n'
 
 const baseUrl = import.meta.env.VITE_BASE_URL
 const security = useSecurityStore()
@@ -28,12 +29,15 @@ export const request = async <T>(config: RequestConfig) => {
  * @param result 响应结果
  */
 function handleResult<T>(config: RequestConfig, result: Result<T>) {
-  let code
-  if (!result || 200 === (code = result.code)) {
+  //是否成功
+  if (result) {
+    result.success = result.code === 200
+  }
+  if (!result || result.success) {
     return result
   }
-  if (code === 1) {
-    toLoginPage()
+  const code = result.code
+  if (globalError(code)) {
     return result
   }
   const fail = config.fail
@@ -83,7 +87,28 @@ function getHeaders(config: RequestConfig) {
   return headers
 }
 
-function toLoginPage() {
+/**
+ * 全局异常处理
+ * @param code
+ */
+function globalError(code: number) {
+  //需要登录
+  if (code === 1) {
+    toLoginPage()
+    return true
+  }
+  //已在其他地方登录
+  if (code == 3) {
+    ElMessage.error(i18n.global.t('login.loggedElsewhere'))
+    toLoginPage(false)
+    return true
+  }
+  return false
+}
+
+function toLoginPage(throwError: boolean = true) {
   router.push('/login').catch((e) => console.error('路由跳转失败', e))
-  throw new Error('need login,redirect to login')
+  if (throwError) {
+    throw new Error('redirect to login')
+  }
 }

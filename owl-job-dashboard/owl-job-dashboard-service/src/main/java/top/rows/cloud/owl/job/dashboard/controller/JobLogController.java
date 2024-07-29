@@ -24,7 +24,7 @@ public class JobLogController {
 
     @PostMapping("/page")
     public Mono<SaResult> page(@RequestBody PageParam param) {
-        return jobLogService.page(PageRequest.of(param.getCurrent(), param.getSize()))
+        return jobLogService.page(PageRequest.of(param.getCurrent() - 1, param.getSize()))
                 .map(SaResult::data);
     }
 }

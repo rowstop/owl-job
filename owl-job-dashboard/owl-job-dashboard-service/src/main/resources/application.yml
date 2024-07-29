@@ -42,7 +42,8 @@ sa-token: #SaTokenConfig
 
 logging:
   level:
-    root: debug
+    root: info
+    io.asyncer.r2dbc.mysql.QUERY: debug
 #    org.hibernate.SQL: debug
 #    org.hibernate.engine.QueryParameters: debug
 #    org.hibernate.engine.query.HQLQueryPlan: debug

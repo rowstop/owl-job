@@ -1,9 +1,11 @@
 package top.rows.cloud.owl.job.dashboard.config;
 
+import cn.dev33.satoken.exception.SaTokenException;
 import cn.dev33.satoken.reactor.filter.SaReactorFilter;
 import cn.dev33.satoken.router.SaRouter;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import top.rows.cloud.owl.job.dashboard.constant.ErrorCodes;
@@ -11,6 +13,7 @@ import top.rows.cloud.owl.job.dashboard.constant.ErrorCodes;
 /**
  * [Sa-Token 权限认证] 全局配置类
  */
+@Slf4j
 @Configuration
 public class SaTokenConfigure {
     /**
@@ -27,10 +30,26 @@ public class SaTokenConfigure {
                 .setAuth(obj -> SaRouter.match("/**", StpUtil::checkLogin))
                 // 指定[异常处理函数]：每次[认证函数]发生异常时执行此函数 
                 .setError(
-                        e -> {
-                            System.out.println("---------- sa全局异常 ");
-                            return SaResult.code(ErrorCodes.NEED_LOGIN)
-                                    .setMsg(e.getMessage());
+                        error -> {
+                            if (!(error instanceof SaTokenException)) {
+                                log.error("unhandled error", error);
+                                return SaResult.code(ErrorCodes.STRANGE);
+                            }
+                            int code = ((SaTokenException) error).getCode();
+                            switch (code) {
+                                case 11011:
+                                    code = ErrorCodes.NEED_LOGIN;
+                                    break;
+                                case 11014:
+                                    code = ErrorCodes.LOGGED_ELSEWHERE;
+                                    break;
+                                default:
+                                    log.error("unhandled error", error);
+                                    code = ErrorCodes.STRANGE;
+                                    break;
+                            }
+                            return SaResult.code(code)
+                                    .setMsg(error.getMessage());
                         }
                 );
     }

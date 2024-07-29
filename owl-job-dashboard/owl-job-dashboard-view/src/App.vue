@@ -4,7 +4,7 @@ import { ref, watch } from 'vue'
 
 import zh from 'element-plus/es/locale/lang/zh-cn'
 import en from 'element-plus/es/locale/lang/en'
-import { SupportLang } from '@/util/i18n/messages'
+import { SupportLang } from '@/util/i18n/model'
 import OwlHeader from '@/components/container/OwlHeader.vue'
 
 const i18n = useI18nStore()

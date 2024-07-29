@@ -7,6 +7,11 @@ package top.rows.cloud.owl.job.dashboard.constant;
 public interface ErrorCodes {
 
     /**
+     * 奇怪的异常
+     */
+    int STRANGE = 0;
+
+    /**
      * 需要登录
      */
     int NEED_LOGIN = 1;
@@ -15,4 +20,9 @@ public interface ErrorCodes {
      * 用户名密码错误
      */
     int USERNAME_PASSWORD_NOT_MATCHED = 2;
+
+    /**
+     * 已在其他地方登录
+     */
+    int LOGGED_ELSEWHERE = 3;
 }

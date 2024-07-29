@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 import i18n from '@/util/i18n'
-import { SupportLang } from '@/util/i18n/messages'
+import { SupportLang } from '@/util/i18n/model'
 
 export const useI18nStore = defineStore(
   'i18n',

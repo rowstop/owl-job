@@ -37,7 +37,7 @@ export const mainRoute: RouteRecordRaw = {
       component: () => import('../views/pages/JobLog.vue'),
       meta: {
         icon: Document,
-        title: 'menu.jobLog'
+        title: 'menu.jobLog.name'
       }
     }
   ]
