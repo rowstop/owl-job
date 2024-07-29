@@ -21,7 +21,7 @@ const errorDrawer = reactive({
 
 const reload = () => {
   page(param.value).then((result) => {
-    if (result.code === 200) {
+    if (result.success) {
       pageData.value = result.data
     }
   })
