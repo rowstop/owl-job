@@ -12,7 +12,10 @@ public interface QueueNames {
 
     String QUEUE_PREFIX = PREFIX + ":(queue)";
 
+
     String NAMESPACE = PREFIX + ":(namespace)";
+
+    String NAMESPACE_GROUP = NAMESPACE + ":group";
 
     String DASHBOARD_EXITS = PREFIX + ":(dashboard)";
 

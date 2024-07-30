@@ -1,28 +1,40 @@
 <script lang="ts" setup>
-import type { PropType } from 'vue'
+import { onMounted, ref } from 'vue'
 
 import { Refresh } from '@element-plus/icons-vue'
 
-const emits = defineEmits(['reload'])
-const model = defineModel({
-  type: Object as PropType<PageInfo>,
-  required: true
+defineProps({
+  total: {
+    type: Number,
+    default: 0
+  }
 })
-const reload = (param: PageParam) => {
+
+const pageParam = ref<PageParam>({
+  current: 1,
+  size: 20
+})
+const emits = defineEmits(['reload'])
+
+onMounted(() => reload(false, pageParam.value))
+const reload = (update: boolean, param: PageParam) => {
+  if (update) {
+    pageParam.value = param
+  }
   emits('reload', param)
 }
 </script>
 <template>
   <el-pagination
-    v-model:current-page="model.current"
-    v-model:page-size="model.size"
+    v-model:current-page="pageParam.current"
+    v-model:page-size="pageParam.size"
     :page-sizes="[20, 40, 80]"
-    :total="model.total"
+    :total="total"
     layout="total, slot, prev, pager, next, jumper, sizes"
-    @size-change="(size: number) => reload({ current: model.current, size })"
-    @current-change="(current: number) => reload({ size: model.size, current })"
+    @size-change="(size: number) => reload(true, { current: pageParam.current, size })"
+    @current-change="(current: number) => reload(true, { size: pageParam.size, current })"
   >
-    <el-button :icon="Refresh" link @click="reload({ current: model.current, size: model.size })" />
+    <el-button :icon="Refresh" link @click="reload(false, pageParam)" />
   </el-pagination>
 </template>
 

@@ -6,7 +6,7 @@ package top.rows.cloud.owl.job.api;
  * @author 张治保
  * @since 2024/6/28
  */
-public interface IOwlJobListener<T> extends IOwlJobRunner<T> {
+public interface IOwlJobListener extends IOwlJobRunner {
 
     /**
      * 任务组名称，全局唯一作为任务调度分派依据

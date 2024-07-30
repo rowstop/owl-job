@@ -8,23 +8,37 @@ const en: ILocal = {
     loginButton: 'Login',
     loggedElsewhere: 'Already logged in elsewhere'
   },
-  menu: {
+  page: {
     overview: 'Overview',
-    namespace: 'Namespace',
-    jobLog: {
-      name: 'Execution Log',
-      tools: {
-        failTitle: 'Error Info',
-        success: ' succeed',
-        fail: 'failed'
-      },
+    namespace: {
+      name: 'Namespace',
       tableColumns: {
-        resultOfExecution: 'result of execution',
         namespace: 'namespace',
-        group: 'task group',
-        taskId: 'task id',
-        execTime: 'time of execution',
-        settingTime: 'time of setting'
+        regTime: 'time of registration',
+        groupCount: 'number of groups',
+        curTaskCount: 'number of tasks'
+      }
+    },
+    task: {
+      name: 'Tasks',
+      manage: {
+        name: 'Task Manage'
+      },
+      log: {
+        name: 'Execution Log',
+        tools: {
+          failTitle: 'Error Info',
+          success: ' succeed',
+          fail: 'failed'
+        },
+        tableColumns: {
+          resultOfExecution: 'result of execution',
+          namespace: 'namespace',
+          group: 'task group',
+          taskId: 'task id',
+          execTime: 'time of execution',
+          settingTime: 'time of setting'
+        }
       }
     }
   }

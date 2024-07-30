@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @ToString
 @Accessors(chain = true)
 public class NamespaceVO {
+
     /**
      * 命名空间名称
      */
@@ -25,4 +26,14 @@ public class NamespaceVO {
      * 命名空间注册时间
      */
     private LocalDateTime time;
+
+    /**
+     * 绑定当前命名空间的分组数量
+     */
+    private int groupCount;
+
+    /**
+     * 在线任务数
+     */
+    private int curTaskCount;
 }

@@ -26,6 +26,7 @@ public class TimedJobTemplateTest {
 
     @BeforeAll
     static void init() {
+        OwlJobReporter.setRedissonClient(RedissonClientGetter.get());
         OwlJobConfig timedConfig = new OwlJobConfig()
                 .setNamespace("owl-job")
                 .setExecutorThreadPool(
@@ -36,7 +37,7 @@ public class TimedJobTemplateTest {
                                 .setQueueCapacity(2000)
                 );
         executor = new OwlJobExecutor(timedConfig);
-        template = new OwlJobTemplate(timedConfig, RedissonClientGetter.get(), executor);
+        template = new OwlJobTemplate(timedConfig, executor);
         template.init();
     }
 
@@ -54,7 +55,7 @@ public class TimedJobTemplateTest {
     @Test
     void testDisposable() throws ExecutionException, InterruptedException {
         String group = "disposable";
-        CompletableFuture<IOwlJobParam<Object>> future = new CompletableFuture<>();
+        CompletableFuture<IOwlJobParam<String>> future = new CompletableFuture<>();
         try {
             executor.addListener(group, future::complete);
             template.add(
@@ -68,7 +69,7 @@ public class TimedJobTemplateTest {
             future.completeExceptionally(ex);
         }
 
-        IOwlJobParam<Object> objectTimeJobParam = future.get();
+        IOwlJobParam<String> objectTimeJobParam = future.get();
         System.out.println("当前时间：" + LocalDateTime.now());
         System.out.println("设定时间：" + objectTimeJobParam.getTime());
         System.out.println("读取到的数据" + objectTimeJobParam);
@@ -80,7 +81,7 @@ public class TimedJobTemplateTest {
     @Test
     void testDisposable2() throws ExecutionException, InterruptedException {
         String group = "disposable2";
-        CompletableFuture<IOwlJobParam<Object>> future = new CompletableFuture<>();
+        CompletableFuture<IOwlJobParam<String>> future = new CompletableFuture<>();
         try {
             executor.addListener(group, future::complete);
             template.add(
@@ -94,7 +95,7 @@ public class TimedJobTemplateTest {
             future.completeExceptionally(ex);
         }
 
-        IOwlJobParam<Object> objectTimeJobParam = future.get();
+        IOwlJobParam<String> objectTimeJobParam = future.get();
         System.out.println("当前时间：" + LocalDateTime.now());
         System.out.println("设定时间：" + objectTimeJobParam.getTime());
         System.out.println("读取到的数据" + objectTimeJobParam);

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import org.redisson.api.RedissonClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -15,6 +16,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import top.rows.cloud.owl.job.core.OwlJobReporter;
 import top.rows.cloud.owl.job.dashboard.properties.DashboardProperties;
 import top.rows.cloud.owl.job.dashboard.util.Common;
 
@@ -30,6 +32,11 @@ import java.time.format.DateTimeFormatter;
 @EnableConfigurationProperties(DashboardProperties.class)
 @SpringBootApplication
 public class DashboardApplication {
+
+
+    public DashboardApplication(RedissonClient redissonClient) {
+        OwlJobReporter.setRedissonClient(redissonClient);
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(DashboardApplication.class, args);

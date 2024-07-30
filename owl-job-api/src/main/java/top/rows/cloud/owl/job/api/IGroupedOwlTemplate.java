@@ -16,10 +16,9 @@ public interface IGroupedOwlTemplate {
      * 添加定时任务
      *
      * @param job 定时任务配置
-     * @param <T> 定时任务参数
      * @return 任务 id
      */
-    default <T> String add(IOwlJob<T> job) {
+    default String add(IOwlJob<String> job) {
         return delegate().add(group(), job);
     }
 
@@ -39,7 +38,7 @@ public interface IGroupedOwlTemplate {
      * @param job 定时任务配置
      * @return 异步任务 id
      */
-    default <T> CompletionStage<String> addAsync(IOwlJob<T> job) {
+    default CompletionStage<String> addAsync(IOwlJob<String> job) {
         return delegate().addAsync(group(), job);
     }
 
@@ -74,7 +73,7 @@ public interface IGroupedOwlTemplate {
     default CompletionStage<Boolean> containsAsync(String id) {
         return delegate().containsAsync(group(), id);
     }
-    
+
 
     /**
      * 任务分组组名

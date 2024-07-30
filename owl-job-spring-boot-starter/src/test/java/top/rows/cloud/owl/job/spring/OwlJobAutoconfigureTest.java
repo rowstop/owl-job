@@ -67,7 +67,7 @@ public class OwlJobAutoconfigureTest {
         //执行参数
         String param = "disposable2";
         //渲染执行任务
-        OwlJob<Object> job = OwlJob.disposable(1, TimeUnit.SECONDS).setParam(param);
+        OwlJob<String> job = OwlJob.disposable(1, TimeUnit.SECONDS).setParam(param);
         //获取执行时间
         LocalDateTime execTime = job.getTime();
         customerGroupTemplate.add(job);

@@ -8,11 +8,11 @@ import top.rows.cloud.owl.job.api.model.IOwlJobParam;
  * @since 2024/7/11
  */
 @FunctionalInterface
-public interface IOwlJobRunner<T> {
+public interface IOwlJobRunner {
     /**
      * 执行定时任务
      *
      * @param param 任务参数
      */
-    void run(IOwlJobParam<T> param);
+    void run(IOwlJobParam<String> param);
 }

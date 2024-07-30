@@ -3,7 +3,6 @@ package top.rows.cloud.owl.job.core;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import top.rows.cloud.owl.job.api.OwlJobHelper;
-import top.rows.cloud.owl.job.core.dashboard.OwlJobDashboard;
 
 import java.util.concurrent.RejectedExecutionException;
 
@@ -32,7 +31,7 @@ public class OwlJobHelperTest {
             System.out.println();
             System.out.println();
             System.out.println();
-            System.out.println(OwlJobDashboard.errorToString(throwable, 3));
+            System.out.println(OwlJobReporter.errorToString(throwable, 3));
         }
     }
 }

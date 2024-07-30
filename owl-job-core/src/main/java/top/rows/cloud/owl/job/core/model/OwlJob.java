@@ -75,11 +75,10 @@ public class OwlJob<T> implements IOwlJob<T> {
      * cron 表达式的定时任务
      *
      * @param quartzCron quartz 格式的 cron 表达式
-     * @param <T>        参数类型
      * @return 任务详情
      */
-    public static <T> OwlJob<T> cron(@NonNull String quartzCron) {
-        OwlJob<T> job = new OwlJob<>();
+    public static OwlJob<String> cron(@NonNull String quartzCron) {
+        OwlJob<String> job = new OwlJob<>();
         job.cron = quartzCron;
         job.type = OwlJobType.CRON;
         LocalDateTime nextTime = nextCronTime(ZonedDateTime.now(), quartzCron);
@@ -95,10 +94,9 @@ public class OwlJob<T> implements IOwlJob<T> {
      *
      * @param time     延迟多少时间执行
      * @param timeUnit 时间单位
-     * @param <T>      参数类型
      * @return IOwlJob
      */
-    public static <T> OwlJob<T> disposable(long time, TimeUnit timeUnit) {
+    public static OwlJob<String> disposable(long time, TimeUnit timeUnit) {
         return disposable(LocalDateTime.now().plusNanos(timeUnit.toNanos(time)));
     }
 
@@ -106,11 +104,10 @@ public class OwlJob<T> implements IOwlJob<T> {
      * 一次性的任务
      *
      * @param nextTime 下次执行时间
-     * @param <T>      参数类型
      * @return IOwlJob
      */
-    public static <T> OwlJob<T> disposable(@NonNull LocalDateTime nextTime) {
-        OwlJob<T> job = new OwlJob<>();
+    public static OwlJob<String> disposable(@NonNull LocalDateTime nextTime) {
+        OwlJob<String> job = new OwlJob<>();
         job.time = nextTime;
         job.type = OwlJobType.DISPOSABLE;
         return job;
@@ -121,10 +118,9 @@ public class OwlJob<T> implements IOwlJob<T> {
      *
      * @param rateDuration 执行频率
      * @param nextTime     下次执行时间
-     * @param <T>          参数类型
      * @return IOwlJob
      */
-    public static <T> OwlJob<T> fixedRate(Duration rateDuration, @NonNull LocalDateTime nextTime) {
+    public static OwlJob<String> fixedRate(Duration rateDuration, @NonNull LocalDateTime nextTime) {
         return fixedRate(rateDuration.toMillis(), nextTime);
     }
 
@@ -133,11 +129,10 @@ public class OwlJob<T> implements IOwlJob<T> {
      *
      * @param rateMills 执行频率 单位毫秒
      * @param nextTime  下次执行时间
-     * @param <T>       参数类型
      * @return IOwlJob
      */
-    public static <T> OwlJob<T> fixedRate(long rateMills, @NonNull LocalDateTime nextTime) {
-        OwlJob<T> job = new OwlJob<>();
+    public static OwlJob<String> fixedRate(long rateMills, @NonNull LocalDateTime nextTime) {
+        OwlJob<String> job = new OwlJob<>();
         job.time = nextTime;
         job.type = OwlJobType.FIXED_RATE;
         job.rateNanos = rateMills * 1_000_000;

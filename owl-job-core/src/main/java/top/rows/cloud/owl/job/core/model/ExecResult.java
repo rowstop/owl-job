@@ -1,4 +1,4 @@
-package top.rows.cloud.owl.job.core.dashboard;
+package top.rows.cloud.owl.job.core.model;
 
 import lombok.Getter;
 import lombok.Setter;

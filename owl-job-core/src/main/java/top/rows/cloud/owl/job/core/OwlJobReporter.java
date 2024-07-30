@@ -1,27 +1,75 @@
-package top.rows.cloud.owl.job.core.dashboard;
+package top.rows.cloud.owl.job.core;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
 import org.redisson.api.RBucket;
+import org.redisson.api.RScoredSortedSet;
 import org.redisson.api.RedissonClient;
 import top.rows.cloud.owl.job.api.model.IOwlJob;
 import top.rows.cloud.owl.job.api.model.QueueNames;
+import top.rows.cloud.owl.job.core.model.ExecResult;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
+ * 仅当 dashboard 存在时生效
+ *
  * @author 张治保
  * @since 2024/7/26
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class OwlJobDashboard {
+public class OwlJobReporter {
 
-    @Setter
+    @Getter
     private static RedissonClient redissonClient;
+
+
+    public static void namespaceReport(String namespace) {
+        report(true, QueueNames.NAMESPACE, Collections.singleton(namespace));
+    }
+
+    public static RScoredSortedSet<String> getReportSet(String key) {
+        return redissonClient.getScoredSortedSet(key);
+    }
+
+    public static void removeNamespaceReport(Set<String> namespace) {
+        report(false, QueueNames.NAMESPACE, namespace);
+    }
+
+    public static void groupReport(String namespace, String group) {
+        report(true, namespaceGroupKey(namespace), Collections.singleton(group));
+    }
+
+    public static String namespaceGroupKey(String namespace) {
+        return QueueNames.NAMESPACE_GROUP + ":" + namespace;
+    }
+
+    public static void removeGroupReport(String namespace, Set<String> groups) {
+
+        report(false, namespaceGroupKey(namespace), groups);
+    }
+
+    private static void report(boolean add, String key, Collection<String> vals) {
+        if (add) {
+            long score = System.currentTimeMillis();
+            getReportSet(key).addAll(
+                    vals.stream()
+                            .collect(
+                                    Collectors.toMap(v -> v, (v) -> (double) score)
+                            )
+            );
+            return;
+        }
+        getReportSet(key).removeAll(vals);
+    }
 
     /**
      * 上报任务执行结果
@@ -55,6 +103,7 @@ public class OwlJobDashboard {
                                 .setError(error == null ? null : errorToString(error))
                 );
     }
+
 
     /**
      * 异常转 string
@@ -104,6 +153,12 @@ public class OwlJobDashboard {
             return;
         }
         writeShortenCause("Caused by: ", causeCause, maxDep, writer);
+    }
+
+    public static void setRedissonClient(RedissonClient redissonClient) {
+        if (OwlJobReporter.redissonClient == null) {
+            OwlJobReporter.redissonClient = redissonClient;
+        }
     }
 
     /**

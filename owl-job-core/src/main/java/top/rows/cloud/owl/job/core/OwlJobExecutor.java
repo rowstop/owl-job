@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import top.rows.cloud.owl.job.api.*;
 import top.rows.cloud.owl.job.api.model.IOwlJob;
 import top.rows.cloud.owl.job.core.config.OwlJobConfig;
-import top.rows.cloud.owl.job.core.dashboard.OwlJobDashboard;
 import top.rows.cloud.owl.job.core.model.OwlJobParam;
 
 import java.util.HashMap;
@@ -44,7 +43,7 @@ public class OwlJobExecutor implements IOwlJobExecutor {
     /**
      * 任务组及对应监听器 map
      */
-    private final Map<String, IOwlJobRunner<?>> groupListenerMap = new HashMap<>();
+    private final Map<String, IOwlJobRunner> groupListenerMap = new HashMap<>();
 
     public OwlJobExecutor(OwlJobConfig config) {
         this.namespace = config.getNamespace();
@@ -54,15 +53,17 @@ public class OwlJobExecutor implements IOwlJobExecutor {
     }
 
     @Override
-    public final <T> OwlJobExecutor addListener(@NonNull String group, @NonNull IOwlJobRunner<T> runner) {
+    public final OwlJobExecutor addListener(@NonNull String group, @NonNull IOwlJobRunner runner) {
+        if (!groupListenerMap.containsKey(group)) {
+            OwlJobReporter.groupReport(namespace, group);
+        }
         groupListenerMap.put(group, runner);
         return this;
     }
 
     @Override
-    public final <T> IOwlJobExecutor addListener(@NonNull IOwlJobListener<T> listener) {
-        groupListenerMap.put(listener.group(), listener);
-        return this;
+    public final IOwlJobExecutor addListener(@NonNull IOwlJobListener listener) {
+        return this.addListener(listener.group(), listener);
     }
 
     @Override
@@ -86,20 +87,21 @@ public class OwlJobExecutor implements IOwlJobExecutor {
 
     @Override
     public void shutdown() {
+        OwlJobReporter.removeGroupReport(namespace, groupListenerMap.keySet());
         if (executor == null || executor.isShutdown()) {
             return;
         }
         executor.shutdown();
     }
 
-    private <T> void execTask(IOwlJobTemplate template, String router) {
-        IOwlJob<T> job = template.getJobConfig(router);
+    private void execTask(IOwlJobTemplate template, String router) {
+        IOwlJob<String> job = template.getJobConfig(router);
         if (job == null) {
             return;
         }
         String[] groupAndTaskId = OwlJobHelper.groupAndTaskIdFromRouter(router);
         String group = groupAndTaskId[0];
-        IOwlJobRunner<?> runner = groupListenerMap.get(group);
+        IOwlJobRunner runner = groupListenerMap.get(group);
         if (runner == null) {
             log.warn("done not have job runner for group:{}", group);
             return;
@@ -111,7 +113,7 @@ public class OwlJobExecutor implements IOwlJobExecutor {
             return;
         }
         //是否需要重复执行 下个执行周期不为空 即需要继续执行任务
-        IOwlJob<T> nextJob = job.next();
+        IOwlJob<String> nextJob = job.next();
         if (nextJob == null) {
             //不需要执行则删除原配置
             template.removeJobConfig(router);
@@ -129,12 +131,12 @@ public class OwlJobExecutor implements IOwlJobExecutor {
      * @return 任务是否已重新存放至任务队列
      */
 
-    private <T> boolean runRetry(
+    private boolean runRetry(
             IOwlJobTemplate template,
-            IOwlJobRunner<?> runner,
+            IOwlJobRunner runner,
             String group,
             String taskId,
-            IOwlJob<T> job) {
+            IOwlJob<String> job) {
         // 执行定时任务
         //增加重试操作
         // 当前重试次数
@@ -146,7 +148,7 @@ public class OwlJobExecutor implements IOwlJobExecutor {
             error = e;
         }
         //上报执行结果
-        OwlJobDashboard.reportExecResult(namespace, group, taskId, job, error);
+        OwlJobReporter.reportExecResult(namespace, group, taskId, job, error);
         int curRetry;
         //如果没有异常 或重试次数大于等于最大重试次数  则不需要继续处理
         if (error == null || (curRetry = job.incrementAndGetRetry()) >= maxFailRetry) {
@@ -175,7 +177,7 @@ public class OwlJobExecutor implements IOwlJobExecutor {
      * @param <T>    人数参数类型
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private <T> void run(IOwlJobRunner<?> runner, IOwlJob<T> job) {
+    private <T> void run(IOwlJobRunner runner, IOwlJob<T> job) {
         runner.run(
                 new OwlJobParam()
                         .setTime(job.getTime())

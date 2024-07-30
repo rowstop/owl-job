@@ -11,7 +11,7 @@ const collapse = ref(false)
 watch(
   () => router.getRoutes(),
   () => {
-    menus.value = menuRender('/', mainRoute.children)
+    menus.value = menuRender('', mainRoute.children)
   },
   {
     immediate: true
@@ -24,7 +24,7 @@ function menuRender(menuFullPath: string, children?: RouteRecordRaw[]) {
   }
   return children.map((child) => {
     const meta = child.meta
-    const curMenuFullPath = menuFullPath + child.path
+    const curMenuFullPath = menuFullPath + '/' + child.path
     const curMenu: MenuItemInfo = {
       title: meta?.title as string,
       path: curMenuFullPath,

@@ -82,8 +82,8 @@ public class OwlJobApplication {
      * @see top.rows.cloud.owl.job.spring.OwlJobAutoconfigure#timedJobExecutor(java.util.List)
      */
 //    @Bean
-    public IOwlJobListener<String> testJobListener() {
-        return new IOwlJobListener<String>() {
+    public IOwlJobListener testJobListener() {
+        return new IOwlJobListener() {
             @Override
             public String group() {
                 return GROUP;

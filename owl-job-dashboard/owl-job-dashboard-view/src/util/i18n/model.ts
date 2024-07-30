@@ -8,23 +8,37 @@ export interface ILocal extends I18NMSg {
     loginButton: string
     loggedElsewhere: string
   }
-  menu: {
+  page: {
     overview: string
-    namespace: string
-    jobLog: {
+    namespace: {
       name: string
-      tools: {
-        failTitle: string
-        success: string
-        fail: string
-      }
       tableColumns: {
-        resultOfExecution: string
         namespace: string
-        group: string
-        taskId: string
-        execTime: string
-        settingTime: string
+        regTime: string
+        groupCount: string
+        curTaskCount: string
+      }
+    }
+    task: {
+      name: string
+      manage: {
+        name: string
+      }
+      log: {
+        name: string
+        tools: {
+          failTitle: string
+          success: string
+          fail: string
+        }
+        tableColumns: {
+          resultOfExecution: string
+          namespace: string
+          group: string
+          taskId: string
+          execTime: string
+          settingTime: string
+        }
       }
     }
   }

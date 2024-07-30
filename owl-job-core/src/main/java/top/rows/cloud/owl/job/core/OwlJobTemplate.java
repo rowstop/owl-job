@@ -14,10 +14,10 @@ import top.rows.cloud.owl.job.api.OwlJobHelper;
 import top.rows.cloud.owl.job.api.model.IOwlJob;
 import top.rows.cloud.owl.job.api.model.QueueNames;
 import top.rows.cloud.owl.job.core.config.OwlJobConfig;
-import top.rows.cloud.owl.job.core.dashboard.OwlJobDashboard;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.UUID;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
@@ -37,11 +37,10 @@ public class OwlJobTemplate implements IOwlJobTemplate {
      * jobConfigRMap redisson 任务配置map 用于获取任务数据
      */
     private final String namespace;
-    private final RedissonClient redissonClient;
     private final RBlockingQueue<String> blockingQueue;
     private final RDelayedQueue<String> delayedQueue;
     private final IOwlJobExecutor jobExecutor;
-    private final RMap<String, IOwlJob<Object>> jobConfigRMap;
+    private final RMap<String, IOwlJob<String>> jobConfigRMap;
     private final long execCorrectionMills;
 
     /**
@@ -56,21 +55,20 @@ public class OwlJobTemplate implements IOwlJobTemplate {
     /**
      * 构造方法 初始化 redisson 阻塞队列 和 延迟队列
      *
-     * @param redissonClient redisson 客户端
-     * @param executor       定时任务执行器
+     * @param executor 定时任务执行器
      */
-    public OwlJobTemplate(@NonNull OwlJobConfig config, @NonNull RedissonClient redissonClient, @Nullable IOwlJobExecutor executor) {
+    public OwlJobTemplate(@NonNull OwlJobConfig config, @Nullable IOwlJobExecutor executor) {
         //获取全局命名空间
         @NonNull String namespace = config.getNamespace();
         this.namespace = namespace;
-        this.redissonClient = redissonClient;
+        RedissonClient redissonClient = OwlJobReporter.getRedissonClient();
         this.jobConfigRMap = redissonClient.getMap(QueueNames.CONF_PREFIX + ":" + namespace);
         this.blockingQueue = redissonClient.getBlockingQueue(QueueNames.QUEUE_PREFIX + ":" + namespace);
         this.delayedQueue = redissonClient.getDelayedQueue(this.blockingQueue);
         this.jobExecutor = executor;
         this.execCorrectionMills = config.getExecCorrectionMills();
         //设置 dashboard 工具使用的 redissonClient
-        OwlJobDashboard.setRedissonClient(redissonClient);
+        OwlJobReporter.setRedissonClient(redissonClient);
     }
 
     private static <T> String taskId(@NonNull IOwlJob<T> job) {
@@ -100,14 +98,12 @@ public class OwlJobTemplate implements IOwlJobTemplate {
      * 添加定时任务
      *
      * @param job 定时任务配置
-     * @param <T> 定时任务参数
      */
     @Override
-    @SuppressWarnings("unchecked")
-    public final <T> String add(@NonNull String group, @NonNull IOwlJob<T> job) {
+    public final String add(@NonNull String group, @NonNull IOwlJob<String> job) {
         String taskId = taskId(job);
         String router = OwlJobHelper.router(group, taskId);
-        jobConfigRMap.put(router, (IOwlJob<Object>) job);
+        jobConfigRMap.put(router, job);
         delayedQueue.offer(
                 router,
                 toDelayMills(job.getTime()),
@@ -120,14 +116,12 @@ public class OwlJobTemplate implements IOwlJobTemplate {
      * 异步添加定时任务
      *
      * @param job 定时任务配置
-     * @param <T> 定时任务参数
      */
     @Override
-    @SuppressWarnings("unchecked")
-    public final <T> CompletionStage<String> addAsync(@NonNull String group, @NonNull IOwlJob<T> job) {
+    public final CompletionStage<String> addAsync(@NonNull String group, @NonNull IOwlJob<String> job) {
         String taskId = taskId(job);
         String router = OwlJobHelper.router(group, taskId);
-        return jobConfigRMap.putAsync(router, (IOwlJob<Object>) job)
+        return jobConfigRMap.putAsync(router, job)
                 .thenApply(
                         (_pre) -> {
                             delayedQueue.offer(
@@ -146,7 +140,7 @@ public class OwlJobTemplate implements IOwlJobTemplate {
      * @param id 任务id
      */
     @Override
-    public final IOwlJob<Object> remove(@NonNull String group, @NonNull String id) {
+    public final IOwlJob<String> remove(@NonNull String group, @NonNull String id) {
         String router = OwlJobHelper.router(group, id);
         delayedQueue.remove(router);
         return jobConfigRMap.remove(router);
@@ -159,7 +153,7 @@ public class OwlJobTemplate implements IOwlJobTemplate {
      * @return 异步处理结果
      */
     @Override
-    public final CompletionStage<IOwlJob<Object>> removeAsync(@NonNull String group, @NonNull String id) {
+    public final CompletionStage<IOwlJob<String>> removeAsync(@NonNull String group, @NonNull String id) {
         String router = OwlJobHelper.router(group, id);
         return delayedQueue.removeAsync(router)
                 .thenApply((_v) -> jobConfigRMap.remove(router));
@@ -176,9 +170,8 @@ public class OwlJobTemplate implements IOwlJobTemplate {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public final <T> IOwlJob<T> getJobConfig(String router) {
-        return (IOwlJob<T>) jobConfigRMap.get(router);
+    public final IOwlJob<String> getJobConfig(String router) {
+        return jobConfigRMap.get(router);
     }
 
     @Override
@@ -216,7 +209,7 @@ public class OwlJobTemplate implements IOwlJobTemplate {
         running = true;
         //初始化消费者线程（常驻线程） 
         consumerThread = new Thread(() -> {
-            redissonClient.getScoredSortedSet(QueueNames.NAMESPACE).add(System.currentTimeMillis(), namespace);
+            OwlJobReporter.namespaceReport(namespace);
             //循环获取定时任务 并交由任务执行器执行
             while (running) {
                 String router;
@@ -245,15 +238,6 @@ public class OwlJobTemplate implements IOwlJobTemplate {
     public final void shutdown() {
         //标记为停止运行
         running = false;
-        //关闭 redisson client
-        if (!redissonClient.isShutdown() && !redissonClient.isShuttingDown()) {
-            try {
-                redissonClient.getScoredSortedSet(QueueNames.NAMESPACE)
-                        .remove(namespace);
-                this.redissonClient.shutdown();
-            } catch (Exception ignore) {
-            }
-        }
         //中断消费者线程
         if (consumerThread != null) {
             //中断线程
@@ -268,6 +252,15 @@ public class OwlJobTemplate implements IOwlJobTemplate {
         //关闭 executor
         if (jobExecutor != null) {
             jobExecutor.shutdown();
+        }
+        RedissonClient redissonClient = OwlJobReporter.getRedissonClient();
+        //关闭 redisson client
+        if (!redissonClient.isShutdown() && !redissonClient.isShuttingDown()) {
+            try {
+                OwlJobReporter.removeNamespaceReport(Collections.singleton(namespace));
+                redissonClient.shutdown();
+            } catch (Exception ignore) {
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 package top.rows.cloud.owl.job.api;
 
 import lombok.NonNull;
+import top.rows.cloud.owl.job.api.model.QueueNames;
 
 /**
  * @author 张治保
@@ -36,5 +37,36 @@ public interface OwlJobHelper {
                 router.substring(0, endIndex),
                 router.substring(endIndex + 1)
         };
+    }
+
+    /**
+     * 获取缓存 key
+     *
+     * @param prefix 前缀
+     * @param suffix 后缀
+     * @return 缓存 key
+     */
+    static String key(String prefix, String suffix) {
+        return prefix + ':' + suffix;
+    }
+
+    /**
+     * 配置详情 key
+     *
+     * @param namespace 命名空间
+     * @return 配置详情 key
+     */
+    static String confKey(String namespace) {
+        return key(QueueNames.CONF_PREFIX, namespace);
+    }
+
+    /**
+     * 任务阻塞队列 key
+     *
+     * @param namespace 命名空间
+     * @return 任务阻塞队列 key
+     */
+    static String blockingQueueKey(String namespace) {
+        return key(QueueNames.QUEUE_PREFIX, namespace);
     }
 }

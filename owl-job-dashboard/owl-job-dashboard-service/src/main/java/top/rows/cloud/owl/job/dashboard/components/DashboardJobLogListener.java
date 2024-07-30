@@ -8,7 +8,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Configuration;
 import top.rows.cloud.owl.job.api.model.QueueNames;
-import top.rows.cloud.owl.job.core.dashboard.ExecResult;
+import top.rows.cloud.owl.job.core.model.ExecResult;
 import top.rows.cloud.owl.job.dashboard.dao.model.JobLog;
 import top.rows.cloud.owl.job.dashboard.dao.repository.JobLogRepository;
 

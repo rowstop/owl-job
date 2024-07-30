@@ -8,23 +8,37 @@ const zh: ILocal = {
     loginButton: '登录',
     loggedElsewhere: '已在其他地方登录'
   },
-  menu: {
+  page: {
     overview: '概况',
-    namespace: '命名空间',
-    jobLog: {
-      name: '调度日志',
-      tools: {
-        failTitle: '错误信息',
-        success: '成功',
-        fail: '失败'
-      },
+    namespace: {
+      name: '命名空间',
       tableColumns: {
-        resultOfExecution: '执行结果',
         namespace: '命名空间',
-        group: '任务分组',
-        taskId: '任务 ID',
-        execTime: '执行时间',
-        settingTime: '设定时间'
+        regTime: '注册时间',
+        groupCount: '分组数量',
+        curTaskCount: '任务数量'
+      }
+    },
+    task: {
+      name: '任务',
+      manage: {
+        name: '任务管理'
+      },
+      log: {
+        name: '调度日志',
+        tools: {
+          failTitle: '错误信息',
+          success: '成功',
+          fail: '失败'
+        },
+        tableColumns: {
+          resultOfExecution: '执行结果',
+          namespace: '命名空间',
+          group: '任务分组',
+          taskId: '任务 ID',
+          execTime: '执行时间',
+          settingTime: '设定时间'
+        }
       }
     }
   }

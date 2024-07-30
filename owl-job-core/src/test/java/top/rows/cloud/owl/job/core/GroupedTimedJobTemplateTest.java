@@ -25,6 +25,7 @@ public class GroupedTimedJobTemplateTest {
 
     @BeforeAll
     static void init() {
+        OwlJobReporter.setRedissonClient(RedissonClientGetter.get());
         OwlJobConfig timedConfig = new OwlJobConfig()
                 .setNamespace("owl-job")
                 .setExecutorThreadPool(
@@ -35,7 +36,7 @@ public class GroupedTimedJobTemplateTest {
                                 .setQueueCapacity(2000)
                 );
         executor = new OwlJobExecutor(timedConfig);
-        template = new OwlJobTemplate(timedConfig, RedissonClientGetter.get(), executor);
+        template = new OwlJobTemplate(timedConfig, executor);
         template.init();
     }
 
@@ -49,7 +50,7 @@ public class GroupedTimedJobTemplateTest {
     void test() throws ExecutionException, InterruptedException {
         String group = "hello-owl-job";
         GroupedOwlJobTemplate groupedTemplate = new GroupedOwlJobTemplate(group, template);
-        CompletableFuture<IOwlJobParam<Object>> future = new CompletableFuture<>();
+        CompletableFuture<IOwlJobParam<String>> future = new CompletableFuture<>();
         try {
             executor.addListener(group, future::complete);
             groupedTemplate.add(
@@ -60,7 +61,7 @@ public class GroupedTimedJobTemplateTest {
             future.completeExceptionally(ex);
         }
 
-        IOwlJobParam<Object> objectTimeJobParam = future.get();
+        IOwlJobParam<String> objectTimeJobParam = future.get();
         System.out.println("当前时间：" + LocalDateTime.now());
         System.out.println("设定时间：" + objectTimeJobParam.getTime());
         System.out.println("读取到的数据" + objectTimeJobParam);

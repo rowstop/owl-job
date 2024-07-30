@@ -15,30 +15,49 @@ export const mainRoute: RouteRecordRaw = {
   children: [
     {
       path: '',
-      name: 'home',
+      name: 'Overview',
       component: () => import('../views/pages/Overview.vue'),
       meta: {
         icon: IconMenu,
-        title: 'menu.overview'
+        title: 'page.overview'
       }
     },
     {
       path: 'namespace',
-      name: 'namespace',
+      name: 'Namespace',
       component: () => import('../views/pages/Namespace.vue'),
       meta: {
         icon: Document,
-        title: 'menu.namespace'
+        title: 'page.namespace.name'
       }
     },
     {
-      path: 'job/log',
-      name: 'jobLog',
-      component: () => import('../views/pages/JobLog.vue'),
+      path: 'task',
+      name: 'task',
       meta: {
         icon: Document,
-        title: 'menu.jobLog.name'
-      }
+        title: 'page.task.name'
+      },
+      children: [
+        {
+          path: 'manage',
+          name: 'TaskManage',
+          component: () => import('../views/pages/task/TaskManage.vue'),
+          meta: {
+            icon: Document,
+            title: 'page.task.manage.name'
+          }
+        },
+        {
+          path: 'log',
+          name: 'TaskLog',
+          component: () => import('../views/pages/task/TaskLog.vue'),
+          meta: {
+            icon: Document,
+            title: 'page.task.log.name'
+          }
+        }
+      ]
     }
   ]
 }

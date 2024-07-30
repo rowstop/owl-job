@@ -18,10 +18,9 @@ public interface IOwlJobTemplate {
      *
      * @param group 任务分组名称
      * @param job   定时任务配置
-     * @param <T>   定时任务参数
      * @return 任务 id
      */
-    <T> String add(String group, IOwlJob<T> job);
+    String add(String group, IOwlJob<String> job);
 
     /**
      * 异步添加定时任务
@@ -30,7 +29,7 @@ public interface IOwlJobTemplate {
      * @param job   定时任务配置
      * @return 异步任务 id
      */
-    <T> CompletionStage<String> addAsync(String group, IOwlJob<T> job);
+    CompletionStage<String> addAsync(String group, IOwlJob<String> job);
 
     /**
      * 移除定时任务
@@ -39,7 +38,7 @@ public interface IOwlJobTemplate {
      * @param id    任务 id 自行定义的任务 key
      * @return 定时任务配置
      */
-    IOwlJob<Object> remove(String group, String id);
+    IOwlJob<String> remove(String group, String id);
 
     /**
      * 异步移除定时任务
@@ -48,7 +47,7 @@ public interface IOwlJobTemplate {
      * @param id    任务 id 自行定义的任务 key
      * @return 异步处理结果
      */
-    CompletionStage<IOwlJob<Object>> removeAsync(String group, String id);
+    CompletionStage<IOwlJob<String>> removeAsync(String group, String id);
 
     /**
      * 消息是否已存在
@@ -74,10 +73,9 @@ public interface IOwlJobTemplate {
      *
      * @param group 任务分组组名
      * @param id    任务 id
-     * @param <T>   任务参数类型
      * @return 任务详情
      */
-    default <T> IOwlJob<T> getJobConfig(String group, String id) {
+    default IOwlJob<String> getJobConfig(String group, String id) {
         return getJobConfig(OwlJobHelper.router(group, id));
     }
 
@@ -85,10 +83,9 @@ public interface IOwlJobTemplate {
      * 直接获取任务详情
      *
      * @param router 任务路由
-     * @param <T>    任务参数类型
      * @return 任务详情
      */
-    <T> IOwlJob<T> getJobConfig(String router);
+    IOwlJob<String> getJobConfig(String router);
 
 
     /**

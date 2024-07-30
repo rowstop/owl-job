@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.function.Supplier;
 
 /**
+ * @param <T> 任务参数类型
  * @author 张治保
  * @since 2024/6/28
  */

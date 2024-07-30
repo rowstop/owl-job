@@ -19,7 +19,7 @@ public interface IOwlJobExecutor {
      * @param runner 任务监听器
      * @return this
      */
-    <T> IOwlJobExecutor addListener(@NonNull String group, @NonNull IOwlJobRunner<T> runner);
+    IOwlJobExecutor addListener(@NonNull String group, @NonNull IOwlJobRunner runner);
 
     /**
      * 添加任务监听器
@@ -27,7 +27,7 @@ public interface IOwlJobExecutor {
      * @param listener 任务监听器
      * @return this
      */
-    <T> IOwlJobExecutor addListener(@NonNull IOwlJobListener<T> listener);
+    IOwlJobExecutor addListener(@NonNull IOwlJobListener listener);
 
     /**
      * 删除任务监听起
