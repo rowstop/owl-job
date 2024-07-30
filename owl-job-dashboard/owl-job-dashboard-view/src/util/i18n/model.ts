@@ -18,6 +18,10 @@ export interface ILocal extends I18NMSg {
         groupCount: string
         curTaskCount: string
       }
+      group: {
+        title: string
+        name: string
+      }
     }
     task: {
       name: string

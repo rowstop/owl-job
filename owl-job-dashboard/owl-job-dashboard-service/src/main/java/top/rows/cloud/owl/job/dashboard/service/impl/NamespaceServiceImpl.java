@@ -1,21 +1,23 @@
 package top.rows.cloud.owl.job.dashboard.service.impl;
 
+import org.redisson.api.RMapReactive;
 import org.redisson.api.RScoredSortedSetReactive;
 import org.redisson.api.RedissonReactiveClient;
-import org.redisson.client.protocol.ScoredEntry;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import top.rows.cloud.owl.job.api.OwlJobHelper;
 import top.rows.cloud.owl.job.api.model.QueueNames;
 import top.rows.cloud.owl.job.core.OwlJobReporter;
 import top.rows.cloud.owl.job.dashboard.model.base.Page;
+import top.rows.cloud.owl.job.dashboard.model.base.PageParam;
+import top.rows.cloud.owl.job.dashboard.model.dto.GroupPageDTO;
+import top.rows.cloud.owl.job.dashboard.model.vo.GroupVO;
 import top.rows.cloud.owl.job.dashboard.model.vo.NamespaceVO;
 import top.rows.cloud.owl.job.dashboard.service.NamespaceService;
 import top.rows.cloud.owl.job.dashboard.util.Common;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author 张治保
@@ -24,34 +26,39 @@ import java.util.List;
 @Service
 public class NamespaceServiceImpl implements NamespaceService {
     private final RScoredSortedSetReactive<String> sortedSet;
-
+    private final RedissonReactiveClient redissonClient;
 
     public NamespaceServiceImpl() {
-        this.sortedSet = OwlJobReporter.getRedissonClient()
-                .reactive()
-                .getScoredSortedSet(QueueNames.NAMESPACE);
+        redissonClient = OwlJobReporter.getRedissonClient()
+                .reactive();
+        this.sortedSet = redissonClient.getScoredSortedSet(QueueNames.NAMESPACE);
     }
 
     @Override
-    public Mono<Page<NamespaceVO>> page(Pageable param) {
-        int number = param.getPageNumber();
-        int size = param.getPageSize();
-        int startIndex = (number - 1) * size;
-        Mono<List<NamespaceVO>> namespacesMono = sortedSet.entryRangeReversed(startIndex, startIndex + size)
+    public Mono<Page<NamespaceVO>> page(PageParam param) {
+        return sortedSet.entryRangeReversed(param.start(), param.end())
                 .map(
-                        entries -> {
-                            List<NamespaceVO> namespaces = new ArrayList<>();
-                            for (ScoredEntry<String> entry : entries) {
-                                NamespaceVO namespace = new NamespaceVO()
-                                        .setName(entry.getValue())
-                                        .setTime(Common.millsToLocalDateTime(entry.getScore().longValue()));
-                                namespaces.add(namespace);
-                            }
-                            return namespaces;
-                        }
-                );
-        return namespacesMono.flatMapIterable(v -> v)
-                .flatMap(this::otherData)
+                        entries -> entries.stream()
+                                .map(
+                                        entry -> new NamespaceVO()
+                                                .setName(entry.getValue())
+                                                .setTime(Common.millsToLocalDateTime(entry.getScore().longValue()))
+                                ).collect(Collectors.toList())
+                )
+                .flatMapMany(Flux::fromIterable)
+                .flatMap(namespace -> {
+                    String name = namespace.getName();
+                    return Mono.zip(
+                            redissonClient
+                                    .getScoredSortedSet(OwlJobReporter.namespaceGroupKey(name))
+                                    .size(),
+                            redissonClient.getMap(OwlJobHelper.confKey(name))
+                                    .size()
+                    ).map(
+                            tuple -> namespace.setGroupCount(tuple.getT1())
+                                    .setCurTaskCount(tuple.getT2())
+                    );
+                })
                 .collectList()
                 .flatMap(
                         namespaces -> sortedSet.size()
@@ -59,20 +66,20 @@ public class NamespaceServiceImpl implements NamespaceService {
                 );
     }
 
-    private Mono<NamespaceVO> otherData(NamespaceVO namespace) {
-        String name = namespace.getName();
-
-        RedissonReactiveClient reactive = OwlJobReporter.getRedissonClient().reactive();
-        return Mono.zip(
-                reactive
-                        .getScoredSortedSet(OwlJobReporter.namespaceGroupKey(name))
-                        .size(),
-                reactive.getMap(OwlJobHelper.confKey(name))
-                        .size()
-        ).map(
-                tuple -> namespace.setGroupCount(tuple.getT1())
-                        .setCurTaskCount(tuple.getT2())
-        );
-
+    @Override
+    public Mono<Page<GroupVO>> groupPage(GroupPageDTO param) {
+        String namespace = param.getNamespace();
+        RScoredSortedSetReactive<String> groupSortedSet = redissonClient.getScoredSortedSet(OwlJobReporter.namespaceGroupKey(namespace));
+        RMapReactive<String, String> confMap = redissonClient.getMap(OwlJobHelper.confKey(namespace));
+        return groupSortedSet.valueRange(param.start(), param.end())
+                .map(
+                        names -> names.stream()
+                                .map(name -> new GroupVO().setName(name))
+                                .collect(Collectors.toList())
+                )
+                .flatMap(
+                        groups -> groupSortedSet.size()
+                                .map(total -> Page.of(total, groups))
+                );
     }
 }

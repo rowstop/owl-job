@@ -97,6 +97,7 @@ public class OwlJobReporter {
                                 .setNamespace(namespace)
                                 .setGroup(group)
                                 .setTaskId(taskId)
+                                .setType(job.getType())
                                 .setExecTime(LocalDateTime.now())
                                 .setSettingTime(job.getTime())
                                 .setParam(param == null ? null : param.toString())

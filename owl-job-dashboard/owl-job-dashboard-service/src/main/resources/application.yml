@@ -44,6 +44,7 @@ logging:
   level:
     root: info
     io.asyncer.r2dbc.mysql.QUERY: debug
+    org.redisson.command.RedisExecutor: debug
 #    org.hibernate.SQL: debug
 #    org.hibernate.engine.QueryParameters: debug
 #    org.hibernate.engine.query.HQLQueryPlan: debug

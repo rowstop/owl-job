@@ -17,6 +17,10 @@ const en: ILocal = {
         regTime: 'time of registration',
         groupCount: 'number of groups',
         curTaskCount: 'number of tasks'
+      },
+      group: {
+        title: 'Task Group({namespace})',
+        name: 'group name'
       }
     },
     task: {

@@ -254,10 +254,10 @@ public class OwlJobTemplate implements IOwlJobTemplate {
             jobExecutor.shutdown();
         }
         RedissonClient redissonClient = OwlJobReporter.getRedissonClient();
+        OwlJobReporter.removeNamespaceReport(Collections.singleton(namespace));
         //关闭 redisson client
         if (!redissonClient.isShutdown() && !redissonClient.isShuttingDown()) {
             try {
-                OwlJobReporter.removeNamespaceReport(Collections.singleton(namespace));
                 redissonClient.shutdown();
             } catch (Exception ignore) {
             }

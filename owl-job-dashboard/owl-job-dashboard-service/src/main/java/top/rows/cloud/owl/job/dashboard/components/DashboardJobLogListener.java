@@ -9,8 +9,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Configuration;
 import top.rows.cloud.owl.job.api.model.QueueNames;
 import top.rows.cloud.owl.job.core.model.ExecResult;
-import top.rows.cloud.owl.job.dashboard.dao.model.JobLog;
-import top.rows.cloud.owl.job.dashboard.dao.repository.JobLogRepository;
+import top.rows.cloud.owl.job.dashboard.dao.model.TaskLog;
+import top.rows.cloud.owl.job.dashboard.dao.repository.TaskLogRepository;
 
 /**
  * @author 张治保
@@ -21,12 +21,12 @@ import top.rows.cloud.owl.job.dashboard.dao.repository.JobLogRepository;
 public class DashboardJobLogListener implements InitializingBean, DisposableBean {
 
     private final RedissonClient redissonClient;
-    private final JobLogRepository jobLogRepository;
+    private final TaskLogRepository jobLogRepository;
     private final RBlockingDeque<ExecResult> execResultQueue;
     private volatile boolean running;
     private Thread listenerThread;
 
-    public DashboardJobLogListener(RedissonClient redissonClient, JobLogRepository jobLogRepository) {
+    public DashboardJobLogListener(RedissonClient redissonClient, TaskLogRepository jobLogRepository) {
         this.redissonClient = redissonClient;
         this.jobLogRepository = jobLogRepository;
         this.execResultQueue = redissonClient.getBlockingDeque(QueueNames.JOB_EXEC_RESULT);
@@ -49,10 +49,11 @@ public class DashboardJobLogListener implements InitializingBean, DisposableBean
                             return;
                         }
                         jobLogRepository.save(
-                                new JobLog()
+                                new TaskLog()
                                         .setNamespace(result.getNamespace())
-                                        .setJobGroup(result.getGroup())
+                                        .setTaskGroup(result.getGroup())
                                         .setTaskId(result.getTaskId())
+                                        .setType(result.getType())
                                         .setExecTime(result.getExecTime())
                                         .setSettingTime(result.getSettingTime())
                                         .setParam(result.getParam())

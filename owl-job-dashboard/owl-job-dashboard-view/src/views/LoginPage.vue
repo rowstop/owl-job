@@ -4,7 +4,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 import type { LoginParam } from '@/api/security/model'
 import { login } from '@/api/security'
 import { throttle } from '@/util'
-import OwlIcon from '@/components/tools/OwlIcon.vue'
+import OwlIcon from '@/components/icon/OwlIcon.vue'
 import { useSecurityStore } from '@/stores/security'
 import router from '@/router'
 

@@ -28,7 +28,7 @@ public interface IGroupedOwlTemplate {
      * @param id 任务 id 自行定义的任务 key
      * @return 定时任务配置
      */
-    default IOwlJob<Object> remove(String id) {
+    default IOwlJob<String> remove(String id) {
         return delegate().remove(group(), id);
     }
 
@@ -48,7 +48,7 @@ public interface IGroupedOwlTemplate {
      * @param id 任务 id 自行定义的任务 key
      * @return 异步处理结果
      */
-    default CompletionStage<IOwlJob<Object>> removeAsync(String id) {
+    default CompletionStage<IOwlJob<String>> removeAsync(String id) {
         return delegate().removeAsync(group(), id);
     }
 

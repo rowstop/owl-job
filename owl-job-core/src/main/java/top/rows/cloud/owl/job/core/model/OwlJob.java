@@ -8,6 +8,7 @@ import lombok.*;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.Nullable;
 import top.rows.cloud.owl.job.api.model.IOwlJob;
+import top.rows.cloud.owl.job.api.model.OwlJobType;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -38,6 +39,7 @@ public class OwlJob<T> implements IOwlJob<T> {
     /**
      * 任务类型
      */
+    @Getter
     private OwlJobType type;
 
     /**

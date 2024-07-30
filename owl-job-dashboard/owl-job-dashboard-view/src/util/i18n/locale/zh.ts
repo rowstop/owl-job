@@ -17,6 +17,10 @@ const zh: ILocal = {
         regTime: '注册时间',
         groupCount: '分组数量',
         curTaskCount: '任务数量'
+      },
+      group: {
+        title: '任务分组（{namespace}）',
+        name: '组名'
       }
     },
     task: {

@@ -21,6 +21,7 @@ public class JobAutoInitTest implements InitializingBean, DisposableBean {
 
     private final IGroupedOwlTemplate helloWorldTemplate;
 
+
     @Override
     public void destroy() throws Exception {
         helloWorldTemplate.remove(TASK_ID);

@@ -16,16 +16,16 @@ defineProps({
         <el-icon>
           <component :is="menu.icon" />
         </el-icon>
-        {{ $t(menu.title) }}
+        <span>{{ $t(menu.title) }}</span>
       </template>
       <menu-item :menus="menu.children" />
     </el-sub-menu>
     <el-menu-item v-else :index="menu.path">
+      <el-icon>
+        <component :is="menu.icon" />
+      </el-icon>
       <template #title>
-        <el-icon>
-          <component :is="menu.icon" />
-        </el-icon>
-        {{ $t(menu.title) }}
+        <span>{{ $t(menu.title) }}</span>
       </template>
     </el-menu-item>
   </template>

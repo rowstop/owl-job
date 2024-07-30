@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.data.relational.core.mapping.Table;
+import top.rows.cloud.owl.job.api.model.OwlJobType;
 
 import java.time.LocalDateTime;
 
@@ -14,8 +15,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Accessors(chain = true)
-@Table("owl_job_log")
-public class JobLog extends Base {
+@Table("owl_task_log")
+public class TaskLog extends Base {
     /**
      * 任务所属命名空间
      */
@@ -24,12 +25,17 @@ public class JobLog extends Base {
     /**
      * 任务分组
      */
-    private String jobGroup;
+    private String taskGroup;
 
     /**
      * 任务 id
      */
     private String taskId;
+
+    /**
+     * 任务类型
+     */
+    private OwlJobType type;
 
     /**
      * 任务执行时间

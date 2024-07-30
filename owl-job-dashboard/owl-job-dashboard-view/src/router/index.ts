@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import HomeView from '../views/HomePage.vue'
 import { useSecurityStore } from '@/stores/security'
-import { Document, Menu as IconMenu } from '@element-plus/icons-vue'
+import { DataAnalysis, Document, Monitor, SetUp } from '@element-plus/icons-vue'
+import { Task } from '@/components/icon'
 
 let security: ReturnType<typeof useSecurityStore>
 
@@ -18,7 +19,7 @@ export const mainRoute: RouteRecordRaw = {
       name: 'Overview',
       component: () => import('../views/pages/Overview.vue'),
       meta: {
-        icon: IconMenu,
+        icon: Monitor,
         title: 'page.overview'
       }
     },
@@ -35,7 +36,7 @@ export const mainRoute: RouteRecordRaw = {
       path: 'task',
       name: 'task',
       meta: {
-        icon: Document,
+        icon: Task,
         title: 'page.task.name'
       },
       children: [
@@ -44,7 +45,7 @@ export const mainRoute: RouteRecordRaw = {
           name: 'TaskManage',
           component: () => import('../views/pages/task/TaskManage.vue'),
           meta: {
-            icon: Document,
+            icon: SetUp,
             title: 'page.task.manage.name'
           }
         },
@@ -53,7 +54,7 @@ export const mainRoute: RouteRecordRaw = {
           name: 'TaskLog',
           component: () => import('../views/pages/task/TaskLog.vue'),
           meta: {
-            icon: Document,
+            icon: DataAnalysis,
             title: 'page.task.log.name'
           }
         }

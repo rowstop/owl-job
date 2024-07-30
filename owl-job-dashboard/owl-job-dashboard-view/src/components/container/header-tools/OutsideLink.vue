@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import OwlIcon from '../../tools/OwlIcon.vue'
+import OwlIcon from '../../icon/OwlIcon.vue'
 
 defineProps({
   title: {

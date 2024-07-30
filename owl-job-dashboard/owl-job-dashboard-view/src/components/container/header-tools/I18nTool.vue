@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { SupportLang } from '@/util/i18n/model'
 import { useI18nStore } from '@/stores/i18n'
-import OwlIcon from '../../tools/OwlIcon.vue'
+import OwlIcon from '../../icon/OwlIcon.vue'
 
 const langDesc: Record<SupportLang, string> = {
   [SupportLang.en]: 'English',

@@ -52,7 +52,7 @@ declare module 'vue' {
     MenuItem: typeof import('./src/components/container/MenuItem.vue')['default']
     OutsideLink: typeof import('./src/components/container/header-tools/OutsideLink.vue')['default']
     OwlHeader: typeof import('./src/components/container/OwlHeader.vue')['default']
-    OwlIcon: typeof import('./src/components/tools/OwlIcon.vue')['default']
+    OwlIcon: typeof import('./src/components/icon/OwlIcon.vue')['default']
     OwlMenu: typeof import('./src/components/container/OwlMenu.vue')['default']
     OwlTablePage: typeof import('./src/components/tools/OwlTablePage.vue')['default']
     Page: typeof import('./src/components/container/Page.vue')['default']
@@ -61,6 +61,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     TablePage: typeof import('./src/components/container/TablePage.vue')['default']
+    Task: typeof import('./src/components/icon/Task.vue')['default']
     Tools: typeof import('./src/components/container/tools/index.vue')['default']
   }
 }

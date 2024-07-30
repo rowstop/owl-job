@@ -25,7 +25,6 @@ public class OwlJobExecutor implements IOwlJobExecutor {
      * 所属命名空间
      */
     private final String namespace;
-
     /**
      * 执行任务的线程池
      */
@@ -34,16 +33,19 @@ public class OwlJobExecutor implements IOwlJobExecutor {
      * 最大失败重试次数
      */
     private final int maxFailRetry;
-
     /**
      * 重试时间间隔
      */
     private final long retryInterval;
-
     /**
      * 任务组及对应监听器 map
      */
     private final Map<String, IOwlJobRunner> groupListenerMap = new HashMap<>();
+
+    /**
+     * 用以标记程序是否正在运行中
+     */
+    private volatile boolean running = true;
 
     public OwlJobExecutor(OwlJobConfig config) {
         this.namespace = config.getNamespace();
@@ -87,11 +89,14 @@ public class OwlJobExecutor implements IOwlJobExecutor {
 
     @Override
     public void shutdown() {
-        OwlJobReporter.removeGroupReport(namespace, groupListenerMap.keySet());
-        if (executor == null || executor.isShutdown()) {
+        if (!running) {
             return;
         }
-        executor.shutdown();
+        running = false;
+        OwlJobReporter.removeGroupReport(namespace, groupListenerMap.keySet());
+        if (executor != null && !executor.isShutdown()) {
+            executor.shutdown();
+        }
     }
 
     private void execTask(IOwlJobTemplate template, String router) {

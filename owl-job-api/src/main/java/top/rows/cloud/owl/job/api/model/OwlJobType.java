@@ -1,4 +1,4 @@
-package top.rows.cloud.owl.job.core.model;
+package top.rows.cloud.owl.job.api.model;
 
 /**
  * @author 张治保

@@ -28,6 +28,13 @@ public interface IOwlJob<T> extends Serializable {
     LocalDateTime getTime();
 
     /**
+     * 获取任务类型
+     *
+     * @return 任务类型
+     */
+    OwlJobType getType();
+
+    /**
      * 获取 自定义的任务 id 生成器 如果为空则默认使用 UUID 生成
      *
      * @return 自定义的任务 id 生成器

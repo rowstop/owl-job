@@ -25,8 +25,8 @@ public class JobConfig {
     }
 
     @Bean
-    public IOwlJobListener<String> helloWorldListener() {
-        return new IOwlJobListener<String>() {
+    public IOwlJobListener helloWorldListener() {
+        return new IOwlJobListener() {
             @Override
             public String group() {
                 return HELLO_WORLD_GROUP;

@@ -10,10 +10,10 @@ import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.data.relational.core.query.Query;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import top.rows.cloud.owl.job.dashboard.dao.model.JobLog;
-import top.rows.cloud.owl.job.dashboard.dao.repository.JobLogRepository;
+import top.rows.cloud.owl.job.dashboard.dao.model.TaskLog;
+import top.rows.cloud.owl.job.dashboard.dao.repository.TaskLogRepository;
 import top.rows.cloud.owl.job.dashboard.model.base.Page;
-import top.rows.cloud.owl.job.dashboard.service.JobLogService;
+import top.rows.cloud.owl.job.dashboard.service.TaskLogService;
 
 /**
  * @author 张治保
@@ -21,15 +21,15 @@ import top.rows.cloud.owl.job.dashboard.service.JobLogService;
  */
 @Service
 @RequiredArgsConstructor
-public class JobLogServiceImpl implements JobLogService {
+public class TaskLogServiceImpl implements TaskLogService {
 
-    private final JobLogRepository jobLogRepository;
+    private final TaskLogRepository jobLogRepository;
     private final R2dbcEntityTemplate r2dbcTemplate;
 
     @Override
-    public Mono<Page<JobLog>> page(Pageable pageable) {
-        Example<JobLog> example = Example.of(
-                new JobLog(),
+    public Mono<Page<TaskLog>> page(Pageable pageable) {
+        Example<TaskLog> example = Example.of(
+                new TaskLog(),
                 ExampleMatcher.matchingAll()
                         .withIgnoreNullValues()
         );
@@ -39,7 +39,7 @@ public class JobLogServiceImpl implements JobLogService {
                                         Query.query(Criteria.empty())
                                                 .with(pageable)
                                                 .sort(Sort.by(Sort.Direction.DESC, "execTime")),
-                                        JobLog.class
+                                        TaskLog.class
                                 ).collectList()
                                 .map(records -> Page.of(total, records))
                 );

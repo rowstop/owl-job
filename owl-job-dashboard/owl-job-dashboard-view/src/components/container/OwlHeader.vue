@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import HeaderTools from './header-tools/index.vue'
-import OwlIcon from '../tools/OwlIcon.vue'
+import OwlIcon from '../icon/OwlIcon.vue'
 </script>
 
 <template>
