@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 import top.rows.cloud.owl.job.dashboard.dao.model.TaskLog;
 import top.rows.cloud.owl.job.dashboard.dao.repository.TaskLogRepository;
 import top.rows.cloud.owl.job.dashboard.model.base.Page;
+import top.rows.cloud.owl.job.dashboard.model.vo.TaskLogVO;
 import top.rows.cloud.owl.job.dashboard.service.TaskLogService;
 
 /**
@@ -27,7 +28,7 @@ public class TaskLogServiceImpl implements TaskLogService {
     private final R2dbcEntityTemplate r2dbcTemplate;
 
     @Override
-    public Mono<Page<TaskLog>> page(Pageable pageable) {
+    public Mono<Page<TaskLogVO>> page(Pageable pageable) {
         Example<TaskLog> example = Example.of(
                 new TaskLog(),
                 ExampleMatcher.matchingAll()
@@ -40,7 +41,9 @@ public class TaskLogServiceImpl implements TaskLogService {
                                                 .with(pageable)
                                                 .sort(Sort.by(Sort.Direction.DESC, "execTime")),
                                         TaskLog.class
-                                ).collectList()
+                                )
+                                .map(TaskLogVO::of)
+                                .collectList()
                                 .map(records -> Page.of(total, records))
                 );
     }

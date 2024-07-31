@@ -41,9 +41,9 @@ export const mainRoute: RouteRecordRaw = {
       },
       children: [
         {
-          path: 'manage',
+          path: '',
           name: 'TaskManage',
-          component: () => import('../views/pages/task/TaskManage.vue'),
+          component: () => import('../views/pages/task/Task.vue'),
           meta: {
             icon: SetUp,
             title: 'page.task.manage.name'

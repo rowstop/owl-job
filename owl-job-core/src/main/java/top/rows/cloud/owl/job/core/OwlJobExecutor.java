@@ -7,6 +7,7 @@ import top.rows.cloud.owl.job.api.model.IOwlJob;
 import top.rows.cloud.owl.job.core.config.OwlJobConfig;
 import top.rows.cloud.owl.job.core.model.OwlJobParam;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -182,7 +183,7 @@ public class OwlJobExecutor implements IOwlJobExecutor {
      * @param <T>    人数参数类型
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private <T> void run(IOwlJobRunner runner, IOwlJob<T> job) {
+    private <T extends Serializable> void run(IOwlJobRunner runner, IOwlJob<T> job) {
         runner.run(
                 new OwlJobParam()
                         .setTime(job.getTime())

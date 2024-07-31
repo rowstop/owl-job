@@ -26,7 +26,6 @@
     <module>owl-job-core</module>
     <module>owl-job-spring-boot-starter</module>
     <module>owl-job-dashboard</module>
-    <module>examples</module>
   </modules>
   <scm>
     <connection>scm:git:https://github.com/rowstop/owl-job.git</connection>

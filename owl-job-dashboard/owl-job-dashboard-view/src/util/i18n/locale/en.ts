@@ -41,7 +41,8 @@ const en: ILocal = {
           group: 'task group',
           taskId: 'task id',
           execTime: 'time of execution',
-          settingTime: 'time of setting'
+          settingTime: 'time of setting',
+          timeError: 'time error'
         }
       }
     }

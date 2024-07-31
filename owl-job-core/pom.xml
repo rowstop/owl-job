@@ -28,18 +28,19 @@
             <version>${slf4j.version}</version>
         </dependency>
 
+        <!--   cron support     -->
+        <dependency>
+            <groupId>com.cronutils</groupId>
+            <artifactId>cron-utils</artifactId>
+            <version>9.2.1</version>
+        </dependency>
+
         <!--     redisson   -->
         <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson</artifactId>
             <version>${redisson.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <!--   cron support     -->
-        <dependency>
-            <groupId>com.cronutils</groupId>
-            <artifactId>cron-utils</artifactId>
-            <version>9.2.1</version>
         </dependency>
 
         <!--    test    -->

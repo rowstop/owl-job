@@ -24,7 +24,9 @@ function menuRender(menuFullPath: string, children?: RouteRecordRaw[]) {
   }
   return children.map((child) => {
     const meta = child.meta
-    const curMenuFullPath = menuFullPath + '/' + child.path
+    const childPath = child.path
+    let curMenuFullPath = menuFullPath + (childPath ? '/' + child.path : '')
+    curMenuFullPath = curMenuFullPath || '/'
     const curMenu: MenuItemInfo = {
       title: meta?.title as string,
       path: curMenuFullPath,

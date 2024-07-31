@@ -12,9 +12,9 @@ import top.rows.cloud.owl.job.api.IOwlJobExecutor;
 import top.rows.cloud.owl.job.api.IOwlJobTemplate;
 import top.rows.cloud.owl.job.api.OwlJobHelper;
 import top.rows.cloud.owl.job.api.model.IOwlJob;
-import top.rows.cloud.owl.job.api.model.QueueNames;
 import top.rows.cloud.owl.job.core.config.OwlJobConfig;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -62,8 +62,8 @@ public class OwlJobTemplate implements IOwlJobTemplate {
         @NonNull String namespace = config.getNamespace();
         this.namespace = namespace;
         RedissonClient redissonClient = OwlJobReporter.getRedissonClient();
-        this.jobConfigRMap = redissonClient.getMap(QueueNames.CONF_PREFIX + ":" + namespace);
-        this.blockingQueue = redissonClient.getBlockingQueue(QueueNames.QUEUE_PREFIX + ":" + namespace);
+        this.jobConfigRMap = redissonClient.getMap(OwlJobHelper.confKey(namespace), OwlJobReporter.CODEC);
+        this.blockingQueue = redissonClient.getBlockingQueue(OwlJobHelper.blockingQueueKey(namespace), OwlJobReporter.CODEC);
         this.delayedQueue = redissonClient.getDelayedQueue(this.blockingQueue);
         this.jobExecutor = executor;
         this.execCorrectionMills = config.getExecCorrectionMills();
@@ -71,7 +71,7 @@ public class OwlJobTemplate implements IOwlJobTemplate {
         OwlJobReporter.setRedissonClient(redissonClient);
     }
 
-    private static <T> String taskId(@NonNull IOwlJob<T> job) {
+    private static <T extends Serializable> String taskId(@NonNull IOwlJob<T> job) {
         Supplier<String> idGenerator = job.getIdGenerator();
         if (idGenerator == null) {
             return UUID.randomUUID().toString();

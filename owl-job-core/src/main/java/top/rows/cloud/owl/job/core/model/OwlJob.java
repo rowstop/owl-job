@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import top.rows.cloud.owl.job.api.model.IOwlJob;
 import top.rows.cloud.owl.job.api.model.OwlJobType;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -26,7 +27,7 @@ import java.util.function.Supplier;
 @ToString
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Accessors(chain = true)
-public class OwlJob<T> implements IOwlJob<T> {
+public class OwlJob<T extends Serializable> implements IOwlJob<T> {
 
     private static volatile CronParser cronParser;
 

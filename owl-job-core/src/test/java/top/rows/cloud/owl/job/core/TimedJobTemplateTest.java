@@ -141,11 +141,11 @@ public class TimedJobTemplateTest {
         template.add(
                 group,
                 //首次一秒钟后执行 然后以每 10 秒一次执行任务
-                OwlJob.fixedRate(10 * 1000, LocalDateTime.now().plusSeconds(1))
+                OwlJob.fixedRate(30 * 1000, LocalDateTime.now().plusSeconds(1))
                         //设置回调参数
                         .setParam("job of fixed rate")
         );
-        Thread.sleep(2 * 60 * 1000);
+        Thread.sleep(10000 * 60 * 1000);
     }
 
     /**
@@ -171,6 +171,4 @@ public class TimedJobTemplateTest {
         );
         Thread.sleep(2 * 60 * 1000);
     }
-
-
 }

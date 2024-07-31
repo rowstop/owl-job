@@ -1,6 +1,5 @@
 package top.rows.cloud.owl.job.dashboard.service.impl;
 
-import org.redisson.api.RMapReactive;
 import org.redisson.api.RScoredSortedSetReactive;
 import org.redisson.api.RedissonReactiveClient;
 import org.springframework.stereotype.Service;
@@ -26,12 +25,11 @@ import java.util.stream.Collectors;
 @Service
 public class NamespaceServiceImpl implements NamespaceService {
     private final RScoredSortedSetReactive<String> sortedSet;
-    private final RedissonReactiveClient redissonClient;
+    private final RedissonReactiveClient redissonReactiveClient;
 
-    public NamespaceServiceImpl() {
-        redissonClient = OwlJobReporter.getRedissonClient()
-                .reactive();
-        this.sortedSet = redissonClient.getScoredSortedSet(QueueNames.NAMESPACE);
+    public NamespaceServiceImpl(RedissonReactiveClient redissonReactiveClient) {
+        this.redissonReactiveClient = redissonReactiveClient;
+        this.sortedSet = redissonReactiveClient.getScoredSortedSet(QueueNames.NAMESPACE);
     }
 
     @Override
@@ -49,10 +47,10 @@ public class NamespaceServiceImpl implements NamespaceService {
                 .flatMap(namespace -> {
                     String name = namespace.getName();
                     return Mono.zip(
-                            redissonClient
+                            redissonReactiveClient
                                     .getScoredSortedSet(OwlJobReporter.namespaceGroupKey(name))
                                     .size(),
-                            redissonClient.getMap(OwlJobHelper.confKey(name))
+                            redissonReactiveClient.getMap(OwlJobHelper.confKey(name))
                                     .size()
                     ).map(
                             tuple -> namespace.setGroupCount(tuple.getT1())
@@ -69,8 +67,7 @@ public class NamespaceServiceImpl implements NamespaceService {
     @Override
     public Mono<Page<GroupVO>> groupPage(GroupPageDTO param) {
         String namespace = param.getNamespace();
-        RScoredSortedSetReactive<String> groupSortedSet = redissonClient.getScoredSortedSet(OwlJobReporter.namespaceGroupKey(namespace));
-        RMapReactive<String, String> confMap = redissonClient.getMap(OwlJobHelper.confKey(namespace));
+        RScoredSortedSetReactive<String> groupSortedSet = redissonReactiveClient.getScoredSortedSet(OwlJobReporter.namespaceGroupKey(namespace));
         return groupSortedSet.valueRange(param.start(), param.end())
                 .map(
                         names -> names.stream()

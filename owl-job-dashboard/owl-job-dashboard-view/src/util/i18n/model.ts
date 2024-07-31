@@ -42,6 +42,7 @@ export interface ILocal extends I18NMSg {
           taskId: string
           execTime: string
           settingTime: string
+          timeError: string
         }
       }
     }

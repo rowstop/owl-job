@@ -11,7 +11,7 @@ import java.util.function.Supplier;
  * @author 张治保
  * @since 2024/6/28
  */
-public interface IOwlJob<T> extends Serializable {
+public interface IOwlJob<T extends Serializable> extends Serializable {
     /**
      * 获取当前任务的参数
      *

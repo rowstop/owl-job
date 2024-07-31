@@ -2,8 +2,8 @@ package top.rows.cloud.owl.job.dashboard.service;
 
 import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Mono;
-import top.rows.cloud.owl.job.dashboard.dao.model.TaskLog;
 import top.rows.cloud.owl.job.dashboard.model.base.Page;
+import top.rows.cloud.owl.job.dashboard.model.vo.TaskLogVO;
 
 
 /**
@@ -18,5 +18,5 @@ public interface TaskLogService {
      * @param pageable 分页查询参数
      * @return 分页查询结果
      */
-    Mono<Page<TaskLog>> page(Pageable pageable);
+    Mono<Page<TaskLogVO>> page(Pageable pageable);
 }

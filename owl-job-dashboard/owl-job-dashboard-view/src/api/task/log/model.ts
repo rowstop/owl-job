@@ -1,16 +1,9 @@
-export enum OwlJobType {
-  //一次性的定时任务
-  DISPOSABLE = 'DISPOSABLE',
-  //固定频率速度轮训
-  FIXED_RATE = 'FIXED_RATE',
-  //cron
-  CRON = 'CRON'
-}
+import { TaskType } from '../model'
 
 /**
  * 任务日志模型
  */
-export interface JobLog {
+export interface TaskLog {
   //命名空间
   namespace: string
   //任务分组
@@ -18,7 +11,7 @@ export interface JobLog {
   //任务 id
   taskId: string
   //任务类型
-  type: OwlJobType
+  type: TaskType
   //任务执行时间
   execTime: string
   //任务设定时间
@@ -27,4 +20,6 @@ export interface JobLog {
   param?: string
   //异常原因
   error?: string
+  //运行时间误差 单位毫秒
+  timeError: number
 }

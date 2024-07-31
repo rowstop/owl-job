@@ -1,5 +1,7 @@
 package top.rows.cloud.owl.job.core;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,6 +9,8 @@ import org.jetbrains.annotations.Nullable;
 import org.redisson.api.RBucket;
 import org.redisson.api.RScoredSortedSet;
 import org.redisson.api.RedissonClient;
+import org.redisson.client.codec.Codec;
+import org.redisson.codec.MarshallingCodec;
 import top.rows.cloud.owl.job.api.model.IOwlJob;
 import top.rows.cloud.owl.job.api.model.QueueNames;
 import top.rows.cloud.owl.job.core.model.ExecResult;
@@ -28,9 +32,20 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class OwlJobReporter {
 
+    public static final Codec CODEC = new MarshallingCodec();
     @Getter
     private static RedissonClient redissonClient;
 
+    static {
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(
+                new SimpleModule()
+                        .addSerializer(LocalDateTime.class, top.rows.cloud.owl.job.core.sd.LocalDateTime.SERIALIZER)
+                        .addDeserializer(LocalDateTime.class, top.rows.cloud.owl.job.core.sd.LocalDateTime.DESERIALIZER)
+        );
+//        CODEC = new JsonJacksonCodec(mapper);
+    }
 
     public static void namespaceReport(String namespace) {
         report(true, QueueNames.NAMESPACE, Collections.singleton(namespace));

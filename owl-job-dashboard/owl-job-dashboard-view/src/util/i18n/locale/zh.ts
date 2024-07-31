@@ -41,7 +41,8 @@ const zh: ILocal = {
           group: '任务分组',
           taskId: '任务 ID',
           execTime: '执行时间',
-          settingTime: '设定时间'
+          settingTime: '设定时间',
+          timeError: '时间误差'
         }
       }
     }
