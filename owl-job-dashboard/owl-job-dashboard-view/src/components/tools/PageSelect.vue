@@ -51,6 +51,7 @@ const valueChange = (val: any) => {
       <el-pagination
         v-model:current-page="current"
         :total="page.total"
+        hide-on-single-page
         layout="prev, pager, next"
       />
     </template>

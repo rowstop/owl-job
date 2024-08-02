@@ -36,7 +36,7 @@ public class GroupedTimedJobTemplateTest {
                                 .setQueueCapacity(2000)
                 );
         executor = new OwlJobExecutor(timedConfig);
-        template = new OwlJobTemplate(timedConfig, executor);
+        template = new OwlJobTemplate(timedConfig.getNamespace(), timedConfig.getExecCorrectionMills(), executor);
         template.init();
     }
 

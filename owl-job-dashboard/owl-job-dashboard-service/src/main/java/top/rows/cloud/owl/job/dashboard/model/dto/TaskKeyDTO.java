@@ -4,8 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import top.rows.cloud.owl.job.api.OwlJobHelper;
+import top.rows.cloud.owl.job.dashboard.model.base.GroupKey;
 
-import java.io.Serializable;
+import javax.validation.constraints.NotBlank;
 
 /**
  * @author 张治保
@@ -14,16 +15,13 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
-public class TaskKeyDTO implements Serializable {
+public class TaskKeyDTO extends GroupKey {
 
-    private String namespace;
-
-    private String group;
-
+    @NotBlank
     private String taskId;
 
     public String router() {
-        return OwlJobHelper.router(group, taskId);
+        return OwlJobHelper.router(getGroup(), taskId);
     }
 
 }

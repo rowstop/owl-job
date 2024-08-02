@@ -37,7 +37,7 @@ public class TimedJobTemplateTest {
                                 .setQueueCapacity(2000)
                 );
         executor = new OwlJobExecutor(timedConfig);
-        template = new OwlJobTemplate(timedConfig, executor);
+        template = new OwlJobTemplate(timedConfig.getNamespace(), timedConfig.getExecCorrectionMills(), executor);
         template.init();
     }
 
@@ -138,13 +138,13 @@ public class TimedJobTemplateTest {
             System.out.println("设定时间：" + param.getTime());
             System.out.println("读取到的数据" + param);
         });
-        template.add(
-                group,
-                //首次一秒钟后执行 然后以每 10 秒一次执行任务
-                OwlJob.fixedRate(30 * 1000, LocalDateTime.now().plusSeconds(1))
-                        //设置回调参数
-                        .setParam("job of fixed rate")
-        );
+//        template.add(
+//                group,
+//                //首次一秒钟后执行 然后以每 10 秒一次执行任务
+//                OwlJob.fixedRate(30 * 1000, LocalDateTime.now().plusSeconds(1))
+//                        //设置回调参数
+//                        .setParam("job of fixed rate")
+//        );
         Thread.sleep(10000 * 60 * 1000);
     }
 

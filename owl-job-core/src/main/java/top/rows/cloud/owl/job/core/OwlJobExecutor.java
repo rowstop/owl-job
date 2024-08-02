@@ -8,6 +8,7 @@ import top.rows.cloud.owl.job.core.config.OwlJobConfig;
 import top.rows.cloud.owl.job.core.model.OwlJobParam;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -148,13 +149,14 @@ public class OwlJobExecutor implements IOwlJobExecutor {
         // 当前重试次数
         // 重试间隔
         Throwable error = null;
+        LocalDateTime execTime = LocalDateTime.now();
         try {
             run(runner, job);
         } catch (Throwable e) {
             error = e;
         }
         //上报执行结果
-        OwlJobReporter.reportExecResult(namespace, group, taskId, job, error);
+        OwlJobReporter.reportExecResult(namespace, group, taskId, job, execTime, error);
         int curRetry;
         //如果没有异常 或重试次数大于等于最大重试次数  则不需要继续处理
         if (error == null || (curRetry = job.incrementAndGetRetry()) >= maxFailRetry) {

@@ -38,3 +38,8 @@ interface Result<T> {
   msg: string
   success: boolean
 }
+
+interface GroupKey {
+  namespace: string
+  group: string
+}

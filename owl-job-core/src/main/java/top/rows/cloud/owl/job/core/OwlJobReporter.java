@@ -1,7 +1,5 @@
 package top.rows.cloud.owl.job.core;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,16 +34,16 @@ public class OwlJobReporter {
     @Getter
     private static RedissonClient redissonClient;
 
-    static {
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(
-                new SimpleModule()
-                        .addSerializer(LocalDateTime.class, top.rows.cloud.owl.job.core.sd.LocalDateTime.SERIALIZER)
-                        .addDeserializer(LocalDateTime.class, top.rows.cloud.owl.job.core.sd.LocalDateTime.DESERIALIZER)
-        );
+//    static {
+//
+//        ObjectMapper mapper = new ObjectMapper();
+//        mapper.registerModule(
+//                new SimpleModule()
+//                        .addSerializer(LocalDateTime.class, top.rows.cloud.owl.job.core.sd.LocalDateTime.SERIALIZER)
+//                        .addDeserializer(LocalDateTime.class, top.rows.cloud.owl.job.core.sd.LocalDateTime.DESERIALIZER)
+//        );
 //        CODEC = new JsonJacksonCodec(mapper);
-    }
+//    }
 
     public static void namespaceReport(String namespace) {
         report(true, QueueNames.NAMESPACE, Collections.singleton(namespace));
@@ -92,6 +90,7 @@ public class OwlJobReporter {
      * @param namespace 命名空间
      * @param group     任务分组
      * @param job       任务详情
+     * @param execTime  任务执行时间
      * @param error     异常信息 如果没有异常信息代表执行成功 否则执行失败
      */
     public static void reportExecResult(
@@ -99,6 +98,7 @@ public class OwlJobReporter {
             String group,
             String taskId,
             IOwlJob<?> job,
+            LocalDateTime execTime,
             @Nullable Throwable error
     ) {
         //如果 dashboard 为空 不需要处理
@@ -113,7 +113,7 @@ public class OwlJobReporter {
                                 .setGroup(group)
                                 .setTaskId(taskId)
                                 .setType(job.getType())
-                                .setExecTime(LocalDateTime.now())
+                                .setExecTime(execTime)
                                 .setSettingTime(job.getTime())
                                 .setParam(param == null ? null : param.toString())
                                 .setError(error == null ? null : errorToString(error))

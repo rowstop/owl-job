@@ -10,7 +10,9 @@ import reactor.core.publisher.Mono;
 import top.rows.cloud.owl.job.api.OwlJobHelper;
 import top.rows.cloud.owl.job.api.model.IOwlJob;
 import top.rows.cloud.owl.job.core.OwlJobReporter;
+import top.rows.cloud.owl.job.core.OwlJobTemplate;
 import top.rows.cloud.owl.job.dashboard.model.base.Page;
+import top.rows.cloud.owl.job.dashboard.model.dto.TaskAddDTO;
 import top.rows.cloud.owl.job.dashboard.model.dto.TaskKeyDTO;
 import top.rows.cloud.owl.job.dashboard.model.dto.TaskPageDTO;
 import top.rows.cloud.owl.job.dashboard.model.vo.TaskVO;
@@ -85,6 +87,17 @@ public class TaskServiceImpl implements TaskService {
         return taskConfMap(namespace)
                 .remove(router)
                 .then(delayQueue(namespace).remove(router))
+                .then();
+    }
+
+    @Override
+    public Mono<Void> add(TaskAddDTO task) {
+        OwlJobTemplate owlJobTemplate = new OwlJobTemplate(
+                task.getNamespace(),
+                50,
+                null
+        );
+        return Mono.fromCompletionStage(owlJobTemplate.addAsync(task.getGroup(), task.toJob()))
                 .then();
     }
 }

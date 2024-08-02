@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
+import top.rows.cloud.owl.job.dashboard.model.dto.TaskAddDTO;
 import top.rows.cloud.owl.job.dashboard.model.dto.TaskKeyDTO;
 import top.rows.cloud.owl.job.dashboard.model.dto.TaskPageDTO;
 import top.rows.cloud.owl.job.dashboard.service.TaskService;
@@ -30,9 +31,16 @@ public class TaskController {
                 .map(SaResult::data);
     }
 
+    @PostMapping("/add")
+    public Mono<SaResult> add(@RequestBody @Valid TaskAddDTO task) {
+        task.valid();
+        return taskService.add(task)
+                .then(Mono.fromCallable(SaResult::ok));
+    }
+
     @PostMapping("/delete")
     public Mono<SaResult> delete(@RequestBody @Valid TaskKeyDTO key) {
         return taskService.delete(key)
-                .map(v -> SaResult.ok());
+                .then(Mono.fromCallable(SaResult::ok));
     }
 }

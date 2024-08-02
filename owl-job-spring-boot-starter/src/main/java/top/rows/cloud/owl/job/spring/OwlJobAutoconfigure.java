@@ -14,6 +14,7 @@ import top.rows.cloud.owl.job.api.IOwlJobTemplate;
 import top.rows.cloud.owl.job.core.OwlJobExecutor;
 import top.rows.cloud.owl.job.core.OwlJobReporter;
 import top.rows.cloud.owl.job.core.OwlJobTemplate;
+import top.rows.cloud.owl.job.core.config.OwlJobConfig;
 
 import java.util.List;
 
@@ -50,8 +51,10 @@ public class OwlJobAutoconfigure {
     @Bean(initMethod = "init", destroyMethod = "shutdown")
     @ConditionalOnMissingBean
     public IOwlJobTemplate owlJobTemplate(IOwlJobExecutor timedJobExecutor) {
+        OwlJobConfig config = timedJobProperties.getConfig();
         return new OwlJobTemplate(
-                timedJobProperties.getConfig(),
+                config.getNamespace(),
+                config.getExecCorrectionMills(),
                 timedJobExecutor
         );
     }

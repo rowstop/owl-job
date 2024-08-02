@@ -19,8 +19,15 @@ export interface TaskVO {
   param: string
 }
 
-export interface TaskKeyDTO {
-  namespace: string
-  group: string
+export interface TaskKeyDTO extends GroupKey {
   taskId: string
+}
+
+export interface TaskAddDTO extends GroupKey {
+  type: TaskType
+  taskId?: string
+  execTime?: string
+  param?: string
+  cron?: string
+  fixedRateSeconds?: number
 }

@@ -12,7 +12,6 @@ import top.rows.cloud.owl.job.api.IOwlJobExecutor;
 import top.rows.cloud.owl.job.api.IOwlJobTemplate;
 import top.rows.cloud.owl.job.api.OwlJobHelper;
 import top.rows.cloud.owl.job.api.model.IOwlJob;
-import top.rows.cloud.owl.job.core.config.OwlJobConfig;
 
 import java.io.Serializable;
 import java.time.Duration;
@@ -54,19 +53,16 @@ public class OwlJobTemplate implements IOwlJobTemplate {
 
     /**
      * 构造方法 初始化 redisson 阻塞队列 和 延迟队列
-     *
-     * @param executor 定时任务执行器
      */
-    public OwlJobTemplate(@NonNull OwlJobConfig config, @Nullable IOwlJobExecutor executor) {
+    public OwlJobTemplate(@NonNull String namespace, long execCorrectionMills, @Nullable IOwlJobExecutor executor) {
         //获取全局命名空间
-        @NonNull String namespace = config.getNamespace();
         this.namespace = namespace;
         RedissonClient redissonClient = OwlJobReporter.getRedissonClient();
         this.jobConfigRMap = redissonClient.getMap(OwlJobHelper.confKey(namespace), OwlJobReporter.CODEC);
         this.blockingQueue = redissonClient.getBlockingQueue(OwlJobHelper.blockingQueueKey(namespace), OwlJobReporter.CODEC);
         this.delayedQueue = redissonClient.getDelayedQueue(this.blockingQueue);
         this.jobExecutor = executor;
-        this.execCorrectionMills = config.getExecCorrectionMills();
+        this.execCorrectionMills = execCorrectionMills;
         //设置 dashboard 工具使用的 redissonClient
         OwlJobReporter.setRedissonClient(redissonClient);
     }
@@ -122,16 +118,13 @@ public class OwlJobTemplate implements IOwlJobTemplate {
         String taskId = taskId(job);
         String router = OwlJobHelper.router(group, taskId);
         return jobConfigRMap.putAsync(router, job)
-                .thenApply(
-                        (_pre) -> {
-                            delayedQueue.offer(
-                                    router,
-                                    toDelayMills(job.getTime()),
-                                    TimeUnit.MILLISECONDS
-                            );
-                            return taskId;
-                        }
-                );
+                .thenCompose(
+                        (_pre) -> delayedQueue.offerAsync(
+                                router,
+                                toDelayMills(job.getTime()),
+                                TimeUnit.MILLISECONDS
+                        )
+                ).thenApply((_r) -> taskId);
     }
 
     /**
@@ -156,7 +149,7 @@ public class OwlJobTemplate implements IOwlJobTemplate {
     public final CompletionStage<IOwlJob<String>> removeAsync(@NonNull String group, @NonNull String id) {
         String router = OwlJobHelper.router(group, id);
         return delayedQueue.removeAsync(router)
-                .thenApply((_v) -> jobConfigRMap.remove(router));
+                .thenCompose((_v) -> jobConfigRMap.removeAsync(router));
     }
 
     @Override
@@ -194,7 +187,13 @@ public class OwlJobTemplate implements IOwlJobTemplate {
     @Override
     public CompletionStage<Void> clearAsync() {
         return delayedQueue.deleteAsync()
-                .thenRun(jobConfigRMap::clear);
+                .thenCompose(
+                        _r -> jobConfigRMap.deleteAsync()
+                                .thenRun(
+                                        () -> {
+                                        }
+                                )
+                );
     }
 
     /**
