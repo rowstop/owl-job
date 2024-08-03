@@ -1,22 +1,25 @@
 <script lang="ts" setup>
-import { type PropType, ref } from 'vue'
+import { type PropType } from 'vue'
 
-type LabelFunc = (item: any) => string
+type PropFunc = (item: any) => string
 
-const props = defineProps({
+defineProps({
   page: {
     type: Object as PropType<Page<any>>,
     required: true
   },
+  val: {
+    type: [String, Function] as PropType<string | PropFunc>,
+    required: false
+  },
   label: {
-    type: [String, Function] as PropType<string | LabelFunc>,
-    required: true
+    type: [String, Function] as PropType<string | PropFunc>,
+    required: false
   }
 })
 
-const selectedItem = defineModel({
-  type: Object,
-  default: () => {}
+const selected = defineModel<any>({
+  default: () => null
 })
 
 const current = defineModel('current', {
@@ -24,28 +27,24 @@ const current = defineModel('current', {
   default: 1
 })
 
-const selected = ref({})
-
-const optionLabel = (item: any) => {
-  const label = props.label
-  if (typeof label === 'string') {
-    return item[label]
+const propBind = (prop: string | PropFunc | undefined, item: any) => {
+  if (!prop) {
+    return item
   }
-  return label(item)
-}
-
-const valueChange = (val: any) => {
-  selectedItem.value = val
+  if (typeof prop === 'string') {
+    return item[prop]
+  }
+  return prop(item)
 }
 </script>
 
 <template>
-  <el-select v-model="selected" fit-input-width @change="valueChange">
+  <el-select v-model="selected" fit-input-width>
     <el-option
       v-for="(item, index) in page.records"
       :key="index"
-      :label="optionLabel(item)"
-      :value="item"
+      :label="propBind(label, item)"
+      :value="propBind(val, item)"
     />
     <template #footer>
       <el-pagination

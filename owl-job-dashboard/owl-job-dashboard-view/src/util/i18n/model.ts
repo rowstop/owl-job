@@ -28,6 +28,33 @@ export interface ILocal extends I18NMSg {
       manage: {
         name: string
       }
+      type: {
+        disposable: string
+        fixedRate: string
+        cron: string
+      }
+      form: {
+        namespace: string
+        group: string
+        groupValid: string
+        type: string
+        taskId: string
+        execTime: string
+        execTimeValid: string
+        fixedRate: string
+        fixedRateValid: string
+        cron: string
+        cronValid: string
+        wrongCronValid: string
+        fixedRateNotice: string
+        param: string
+        submitButton: string
+        newButton: string
+        newTitle: string
+        operate: string
+        edit: string
+        del: string
+      }
       log: {
         name: string
         tools: {

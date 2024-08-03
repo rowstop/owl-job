@@ -7,6 +7,12 @@ export enum TaskType {
   CRON = 'CRON'
 }
 
+export const TaskDesc: Record<TaskType, string> = {
+  [TaskType.DISPOSABLE]: 'page.task.type.disposable',
+  [TaskType.FIXED_RATE]: 'page.task.type.fixedRate',
+  [TaskType.CRON]: 'page.task.type.cron'
+}
+
 export interface TaskPageDTO extends PageParam {
   namespace: string
 }

@@ -21,7 +21,7 @@ const groupDraw = reactive({
   } as Page<GroupVO>
 })
 
-const reload = (pageParam: PageParam) => {
+const reloadData = (pageParam: PageParam) => {
   page(pageParam).then((result) => {
     if (result.success) pageData.value = result.data
   })
@@ -38,7 +38,7 @@ const reloadGroup = (pageParam: PageParam) => {
 </script>
 
 <template>
-  <table-page :page="pageData" @reload="reload">
+  <table-page :page="pageData" @load-data="reloadData">
     <template #search>
       <div>111</div>
       <div>111</div>

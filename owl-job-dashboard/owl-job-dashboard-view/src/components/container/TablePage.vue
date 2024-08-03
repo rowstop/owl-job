@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { defineEmits, defineProps, type PropType, useSlots } from 'vue'
+import { type PropType, useSlots, watch } from 'vue'
 import Page from '@/components/container/Page.vue'
 import Pagination from '@/components/tools/Pagination.vue'
 
@@ -10,7 +10,23 @@ defineProps({
   }
 })
 const slots = useSlots()
-const emits = defineEmits(['reload'])
+
+const emits = defineEmits(['loadData'])
+
+const reload = defineModel({
+  type: Object as PropType<PageReload>,
+  default() {
+    return {
+      current: 1,
+      reload: false
+    }
+  }
+})
+
+watch(
+  () => reload.value.current,
+  () => console.log('table page reload:' + reload.value.current)
+)
 </script>
 
 <template>
@@ -24,7 +40,11 @@ const emits = defineEmits(['reload'])
       </el-table>
     </template>
     <template #footer>
-      <pagination :total="page?.total" @reload="(curParam) => emits('reload', curParam)" />
+      <pagination
+        v-model="reload"
+        :total="page?.total"
+        @load-data="(curParam) => emits('loadData', curParam)"
+      />
     </template>
   </page>
 </template>

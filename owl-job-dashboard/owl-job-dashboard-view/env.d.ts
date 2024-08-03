@@ -43,3 +43,8 @@ interface GroupKey {
   namespace: string
   group: string
 }
+
+interface PageReload {
+  current: number
+  reload: boolean
+}

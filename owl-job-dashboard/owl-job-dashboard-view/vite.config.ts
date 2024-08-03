@@ -6,26 +6,29 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+import { Arrayable } from '@antfu/utils'
+import { Resolver } from 'unplugin-auto-import/types'
 
 // https://vitejs.dev/config/
+const isDev = process.env.NODE_ENV === 'development'
+
+const resolvers: Arrayable<Arrayable<Resolver>> | undefined = isDev
+  ? undefined
+  : [
+      ElementPlusResolver({
+        importStyle: 'sass'
+      })
+    ]
 export default defineConfig({
   base: '/owl/',
   plugins: [
     vue(),
     // ...
     AutoImport({
-      resolvers: [
-        ElementPlusResolver({
-          importStyle: 'sass'
-        })
-      ]
+      resolvers
     }),
     Components({
-      resolvers: [
-        ElementPlusResolver({
-          importStyle: 'sass'
-        })
-      ]
+      resolvers
     }),
     //svg icon
     createSvgIconsPlugin({

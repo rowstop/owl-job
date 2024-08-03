@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { type PropType, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import type { NamespaceVO } from '@/api/namespace/model'
 import { page } from '@/api/namespace'
 import PageSelect from '@/components/tools/PageSelect.vue'
 
 const namespace = defineModel({
-  type: Object as PropType<NamespaceVO>,
-  default: () => {}
+  type: String,
+  default: () => ''
 })
 const current = ref(1)
 const pageData = ref<Page<NamespaceVO>>({
@@ -28,7 +28,7 @@ function reload(pageParam: PageParam) {
     const namespacePage = result.data
     pageData.value = namespacePage
     if (namespacePage.records.length) {
-      namespace.value = namespacePage.records[0]
+      namespace.value = namespacePage.records[0].name
     }
   })
 }
@@ -40,6 +40,7 @@ function reload(pageParam: PageParam) {
     v-model:current="current"
     :label="(item: NamespaceVO) => item.name"
     :page="pageData"
+    :val="(item: NamespaceVO) => item.name"
   />
 </template>
 

@@ -28,6 +28,34 @@ const en: ILocal = {
       manage: {
         name: 'Task Manage'
       },
+      type: {
+        disposable: 'disposable',
+        fixedRate: 'fixed rate',
+        cron: 'CRON'
+      },
+      form: {
+        namespace: 'namespace',
+        group: 'task group',
+        groupValid: 'task group cannot be null',
+        type: 'task type',
+        taskId: 'task id',
+        cron: 'cron',
+        cronValid: 'cron expression cannot be null',
+        wrongCronValid: 'wrong cron expression',
+        execTime: 'first execution time',
+        execTimeValid: 'first execution time cannot be null',
+        fixedRate: 'fixed rate',
+        fixedRateValid: 'fixed rate cannot be null',
+        fixedRateNotice:
+          'Unit: second. After the first execution, it will be executed cyclically at this fixed frequency.',
+        param: 'task param',
+        submitButton: 'submit',
+        operate: ' operate',
+        newButton: 'new Task',
+        newTitle: '[{namespace}]Add a new task',
+        edit: 'edit',
+        del: 'delete'
+      },
       log: {
         name: 'Execution Log',
         tools: {

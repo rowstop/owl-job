@@ -10,6 +10,8 @@ import top.rows.cloud.owl.job.api.model.IOwlJob;
 import top.rows.cloud.owl.job.api.model.OwlJobType;
 import top.rows.cloud.owl.job.core.model.OwlJob;
 import top.rows.cloud.owl.job.dashboard.model.base.GroupKey;
+import top.rows.cloud.owl.job.dashboard.model.base.WrongCronException;
+import top.rows.cloud.owl.job.dashboard.util.Common;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -38,7 +40,7 @@ public class TaskAddDTO extends GroupKey {
     /**
      * 执行时间 当 tye
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = Common.DATETIME_FORMAT_PATTERN)
     private LocalDateTime execTime;
 
     /**
@@ -72,7 +74,11 @@ public class TaskAddDTO extends GroupKey {
         OwlJob<String> job;
         switch (type) {
             case CRON: //cron表达式任务
-                job = OwlJob.cron(cron);
+                try {
+                    job = OwlJob.cron(cron);
+                } catch (IllegalArgumentException exception) {
+                    throw new WrongCronException();
+                }
                 break;
             case FIXED_RATE: //固定频率任务
                 job = OwlJob.fixedRate(fixedRateSeconds * 1000, execTime);

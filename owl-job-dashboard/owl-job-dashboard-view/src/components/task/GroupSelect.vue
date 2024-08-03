@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type PropType, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import type { GroupVO, NamespaceVO } from '@/api/namespace/model'
 import { groupPage } from '@/api/namespace'
 import PageSelect from '@/components/tools/PageSelect.vue'
@@ -12,7 +12,7 @@ const props = defineProps({
 })
 
 const group = defineModel({
-  type: Object as PropType<GroupVO>,
+  type: String || null,
   required: false
 })
 const current = ref(1)
@@ -35,7 +35,7 @@ function reload(pageParam: PageParam) {
     const groupPage = result.data
     pageData.value = groupPage
     if (groupPage.records.length) {
-      group.value = groupPage.records[0]
+      group.value = groupPage.records[0].name
     }
   })
 }
@@ -47,6 +47,7 @@ function reload(pageParam: PageParam) {
     v-model:current="current"
     :label="(item: NamespaceVO) => item.name"
     :page="pageData"
+    :val="(item: NamespaceVO) => item.name"
   />
 </template>
 

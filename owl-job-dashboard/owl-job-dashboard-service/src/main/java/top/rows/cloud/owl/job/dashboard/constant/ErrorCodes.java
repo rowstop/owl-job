@@ -25,4 +25,9 @@ public interface ErrorCodes {
      * 已在其他地方登录
      */
     int LOGGED_ELSEWHERE = 3;
+
+    /**
+     * 错误的 cron 表达式
+     */
+    int WRONG_CRON = 4;
 }

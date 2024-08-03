@@ -14,6 +14,10 @@ import '@/assets/css/index.scss'
 
 const app = createApp(App)
 
+//如果不是线上环境则直接全量导入
+if (import.meta.env.MODE === 'development') {
+  app.use(await import('element-plus'))
+}
 //注册 pinia
 app.use(createPinia().use(PiniaPersistedState)).use(i18n)
 //other

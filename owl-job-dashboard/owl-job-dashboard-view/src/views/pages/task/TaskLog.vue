@@ -3,6 +3,7 @@ import TablePage from '@/components/container/TablePage.vue'
 import { reactive, ref } from 'vue'
 import { page } from '@/api/task/log'
 import type { TaskLog } from '@/api/task/log/model'
+import { TaskDesc } from '@/api/task'
 
 const pageData = ref<Page<TaskLog>>({
   records: [],
@@ -14,7 +15,12 @@ const errorDrawer = reactive({
   error: ''
 })
 
-const reload = (param: PageParam) => {
+const reload = reactive<PageReload>({
+  current: 1,
+  reload: false
+})
+
+const loadData = (param: PageParam) => {
   page(param).then((result) => {
     if (result.success) {
       pageData.value = result.data
@@ -32,7 +38,7 @@ const showError = (error?: string) => {
 </script>
 
 <template>
-  <table-page :page="pageData" @reload="reload">
+  <table-page v-model="reload" :page="pageData" @load-data="loadData">
     <el-table-column
       :label="$t('page.task.log.tableColumns.namespace')"
       prop="namespace"
@@ -43,9 +49,14 @@ const showError = (error?: string) => {
       prop="taskGroup"
       show-overflow-tooltip
     />
+    <el-table-column :label="$t('page.task.form.type')">
+      <template #default="{ row }: { row: TaskLog }">
+        {{ $t(TaskDesc[row.type]) }}
+      </template>
+    </el-table-column>
+    <el-table-column :label="$t('page.task.form.param')" prop="param" show-overflow-tooltip />
     <el-table-column
       :label="$t('page.task.log.tableColumns.resultOfExecution')"
-      prop="taskId"
       show-overflow-tooltip
     >
       <template #default="{ row }: { row: TaskLog }">

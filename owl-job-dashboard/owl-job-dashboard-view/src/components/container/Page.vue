@@ -14,9 +14,6 @@ const searchHeight = ref(0)
 const footerHeight = ref(0)
 
 const mainHeight = computed(() => {
-  console.log('containerHeight=' + containerHeight.value)
-  console.log('searchHeight=' + searchHeight.value)
-  console.log('footerHeight=' + footerHeight.value)
   console.log(containerHeight.value - searchHeight.value - footerHeight.value)
   return containerHeight.value - searchHeight.value - footerHeight.value
 })

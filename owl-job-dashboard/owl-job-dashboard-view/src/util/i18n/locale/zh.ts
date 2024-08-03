@@ -28,6 +28,33 @@ const zh: ILocal = {
       manage: {
         name: '任务管理'
       },
+      type: {
+        disposable: '一次性',
+        fixedRate: '固定频率',
+        cron: 'CRON'
+      },
+      form: {
+        namespace: '命名空间',
+        group: '任务组',
+        groupValid: '任务组不能为空',
+        type: '任务类型',
+        taskId: '任务 id',
+        cron: 'cron 表达式',
+        cronValid: 'cron 表达式不能为空',
+        wrongCronValid: 'cron 表达式不正确',
+        execTime: '首次执行时间',
+        execTimeValid: '首次执行时间不能为空',
+        fixedRate: '固定执行频率',
+        fixedRateValid: '固定执行频率不能为空',
+        fixedRateNotice: '单位：秒，首次执行之后，以此固定频率循环执行',
+        param: '任务参数',
+        submitButton: '保存',
+        newButton: '新增任务',
+        newTitle: '【{namespace}】新增任务',
+        operate: '操作',
+        edit: '编辑',
+        del: '删除'
+      },
       log: {
         name: '调度日志',
         tools: {
@@ -42,7 +69,7 @@ const zh: ILocal = {
           taskId: '任务 ID',
           execTime: '执行时间',
           settingTime: '设定时间',
-          timeError: '时间误差'
+          timeError: '误差'
         }
       }
     }
