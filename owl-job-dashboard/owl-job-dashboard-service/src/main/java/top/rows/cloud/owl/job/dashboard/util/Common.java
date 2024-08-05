@@ -14,6 +14,7 @@ public interface Common {
     String DATE_FORMAT_PATTERN = "yyyy-MM-dd";
     String TIME_FORMAT_PATTERN = "HH:mm:ss";
 
+
     /**
      * 毫秒转 local date time
      *

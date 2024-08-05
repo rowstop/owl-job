@@ -16,7 +16,7 @@ export const request = async <T>(config: RequestConfig) => {
   const init: RequestInit = {
     method: 'POST',
     headers: getHeaders(config),
-    body: JSON.stringify(config.data)
+    body: config.data ? JSON.stringify(config.data) : null
   }
   const response = await fetch(url, init)
   const resp = await response.json()

@@ -1,7 +1,5 @@
 package top.rows.cloud.owl.job.core;
 
-import com.cronutils.builder.CronBuilder;
-import com.cronutils.model.Cron;
 import com.cronutils.model.CronType;
 import com.cronutils.model.definition.CronDefinitionBuilder;
 import com.cronutils.parser.CronParser;
@@ -11,9 +9,6 @@ import top.rows.cloud.owl.job.core.model.OwlJob;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-
-import static com.cronutils.model.field.expression.FieldExpressionFactory.always;
-import static com.cronutils.model.field.expression.FieldExpressionFactory.on;
 
 /**
  * @author 张治保
@@ -31,17 +26,4 @@ public class QuartzCronTest {
         System.out.println(localDateTime);
     }
 
-    @Test
-    void test() {
-
-        Cron cron = CronBuilder.cron(CronDefinitionBuilder.instanceDefinitionFor(CronType.QUARTZ))
-                .withYear(always())
-                .withMonth(always())
-                .withHour(always())
-                .withMinute(always())
-                .withSecond(on(0))
-                .instance();
-        String cronAsString = cron.asString();
-        System.out.println(cronAsString);
-    }
 }

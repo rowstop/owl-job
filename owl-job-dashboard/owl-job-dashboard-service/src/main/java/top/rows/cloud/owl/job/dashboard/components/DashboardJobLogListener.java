@@ -56,6 +56,7 @@ public class DashboardJobLogListener implements InitializingBean, DisposableBean
                                         .setType(result.getType())
                                         .setExecTime(result.getExecTime())
                                         .setSettingTime(result.getSettingTime())
+                                        .setSettingDate(result.getSettingTime().toLocalDate())
                                         .setParam(result.getParam())
                                         .setError(result.getError())
                         ).block();

@@ -1,6 +1,5 @@
 import { request } from '../'
 import type { TaskAddDTO, TaskKeyDTO, TaskPageDTO, TaskVO } from './model'
-
 //任务分页查询
 export const page = (data: TaskPageDTO) => {
   return request<Page<TaskVO>>({

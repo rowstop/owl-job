@@ -6,6 +6,7 @@ import lombok.experimental.Accessors;
 import org.springframework.data.relational.core.mapping.Table;
 import top.rows.cloud.owl.job.api.model.OwlJobType;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -46,6 +47,11 @@ public class TaskLog extends Base {
      * 设定时间
      */
     private LocalDateTime settingTime;
+
+    /**
+     * 设定时间所属日期
+     */
+    private LocalDate settingDate;
 
     /**
      * 任务参数
