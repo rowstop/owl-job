@@ -53,7 +53,8 @@ const zh: ILocal = {
         newTitle: '【{namespace}】新增任务',
         operate: '操作',
         edit: '编辑',
-        del: '删除'
+        del: '删除',
+        delConfirm: '确定删除该条数据？'
       },
       log: {
         name: '调度日志',

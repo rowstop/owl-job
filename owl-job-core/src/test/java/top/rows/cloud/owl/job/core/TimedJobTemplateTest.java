@@ -121,7 +121,7 @@ public class TimedJobTemplateTest {
                 OwlJob.cron(cron)
                         .setParam("job of cron")
         );
-        Thread.sleep(2 * 60 * 1000);
+        Thread.sleep(2000000L * 60 * 1000);
     }
 
     /**

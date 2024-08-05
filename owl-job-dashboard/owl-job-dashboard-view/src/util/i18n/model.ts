@@ -54,6 +54,7 @@ export interface ILocal extends I18NMSg {
         operate: string
         edit: string
         del: string
+        delConfirm: string
       }
       log: {
         name: string

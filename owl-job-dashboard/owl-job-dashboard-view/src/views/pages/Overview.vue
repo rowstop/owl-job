@@ -4,11 +4,6 @@ import Page from '@/components/container/Page.vue'
 
 <template>
   <page>
-    <template #search>
-      <p>111</p>
-      <p>111</p>
-      <p>111</p>
-    </template>
     <div class="flex flex-wrap gap-4">
       <el-card
         v-for="item in 200"

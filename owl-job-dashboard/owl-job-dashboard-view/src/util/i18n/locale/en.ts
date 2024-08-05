@@ -51,10 +51,11 @@ const en: ILocal = {
         param: 'task param',
         submitButton: 'submit',
         operate: ' operate',
-        newButton: 'new Task',
+        newButton: 'add a new Task',
         newTitle: '[{namespace}]Add a new task',
         edit: 'edit',
-        del: 'delete'
+        del: 'delete',
+        delConfirm: 'Are you sure to delete this data?'
       },
       log: {
         name: 'Execution Log',

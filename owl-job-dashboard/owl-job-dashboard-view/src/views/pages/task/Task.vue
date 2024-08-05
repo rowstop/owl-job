@@ -24,6 +24,7 @@ const taskFormData = ref<TaskAddDTO>({
   group: '',
   type: TaskType.DISPOSABLE
 })
+const isNewTask = ref(true)
 
 const taskDraw = reactive({
   show: false,
@@ -91,6 +92,7 @@ const operate = (type: OpType | '', row: TaskVO) => {
 
 const showAddTask = () => {
   taskDraw.show = true
+  isNewTask.value = true
 }
 
 const taskFormSaved = () => {
@@ -102,8 +104,12 @@ const taskFormSaved = () => {
 <template>
   <table-page v-model="reload" :page="pageData" @load-data="loadData">
     <template #search>
-      <namespace-select v-model="taskFormData.namespace" style="width: 20%" />
-      <div style="width: 100%; padding: 5px 0">
+      <el-form inline label-width="auto">
+        <el-form-item label="命名空间">
+          <namespace-select v-model="taskFormData.namespace" style="width: 200px" />
+        </el-form-item>
+      </el-form>
+      <div>
         <el-button v-show="taskFormData.namespace" size="small" type="primary" @click="showAddTask"
           >{{ $t('page.task.form.newButton') }}
         </el-button>
@@ -124,11 +130,14 @@ const taskFormSaved = () => {
           </el-button>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item :command="OpType.EDIT"
+              <el-dropdown-item :command="OpType.EDIT" disabled
                 >{{ $t('page.task.form.edit') }}
               </el-dropdown-item>
               <el-dropdown-item :command="''">
-                <el-popconfirm title="确认删除该数据吗?" @confirm="operate(OpType.DELETE, row)">
+                <el-popconfirm
+                  :title="$t('page.task.form.delConfirm')"
+                  @confirm="operate(OpType.DELETE, row)"
+                >
                   <template #reference>
                     {{ $t('page.task.form.del') }}
                   </template>
