@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type PropType, useSlots, watch } from 'vue'
+import { type PropType, useSlots } from 'vue'
 import Page from '@/components/container/Page.vue'
 import Pagination from '@/components/tools/Pagination.vue'
 
@@ -22,11 +22,6 @@ const reload = defineModel({
     }
   }
 })
-
-watch(
-  () => reload.value.current,
-  () => console.log('table page reload:' + reload.value.current)
-)
 </script>
 
 <template>

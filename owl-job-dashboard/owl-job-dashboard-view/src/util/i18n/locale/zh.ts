@@ -1,6 +1,10 @@
 import type { ILocal } from '../model'
 
 const zh: ILocal = {
+  common: {
+    namespace: '命名空间',
+    all: '全部'
+  },
   login: {
     username: '请输入用户名',
     password: '请输入密码',
@@ -9,7 +13,13 @@ const zh: ILocal = {
     loggedElsewhere: '已在其他地方登录'
   },
   page: {
-    overview: '概况',
+    overview: {
+      name: '概况',
+      error: '失败',
+      success: '成功',
+      pieTitle: '运行结果比率',
+      lineTitle: '运行结果'
+    },
     namespace: {
       name: '命名空间',
       tableColumns: {

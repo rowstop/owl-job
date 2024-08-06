@@ -1,6 +1,10 @@
 interface I18NMSg extends Record<string, string | I18NMSg> {}
 
 export interface ILocal extends I18NMSg {
+  common: {
+    namespace: string
+    all: string
+  }
   login: {
     username: string
     password: string
@@ -9,7 +13,13 @@ export interface ILocal extends I18NMSg {
     loggedElsewhere: string
   }
   page: {
-    overview: string
+    overview: {
+      name: string
+      error: string
+      success: string
+      pieTitle: string
+      lineTitle: string
+    }
     namespace: {
       name: string
       tableColumns: {

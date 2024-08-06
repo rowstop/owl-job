@@ -17,10 +17,10 @@ export const mainRoute: RouteRecordRaw = {
     {
       path: '',
       name: 'Overview',
-      component: () => import('../views/pages/Overview.vue'),
+      component: () => import('../views/overview/index.vue'),
       meta: {
         icon: Monitor,
-        title: 'page.overview'
+        title: 'page.overview.name'
       }
     },
     {

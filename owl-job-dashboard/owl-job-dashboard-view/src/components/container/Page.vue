@@ -14,7 +14,6 @@ const searchHeight = ref(0)
 const footerHeight = ref(0)
 
 const mainHeight = computed(() => {
-  console.log(containerHeight.value - searchHeight.value - footerHeight.value)
   return containerHeight.value - searchHeight.value - footerHeight.value
 })
 //计算 container 及相关组件高度
@@ -31,7 +30,6 @@ onMounted(() => {
     dispatch.push(footerHeight)
   }
   useResizeObserver(observerTargets, (entries) => {
-    console.log(entries)
     for (let order = 0; order < entries.length; order++) {
       dispatch[order].value = entries[order].contentRect.height
     }

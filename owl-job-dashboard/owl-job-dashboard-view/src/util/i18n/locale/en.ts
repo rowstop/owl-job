@@ -1,6 +1,10 @@
 import type { ILocal } from '../model'
 
 const en: ILocal = {
+  common: {
+    namespace: 'namespace',
+    all: 'all'
+  },
   login: {
     username: 'please input a username',
     password: 'please input a password',
@@ -9,7 +13,13 @@ const en: ILocal = {
     loggedElsewhere: 'Already logged in elsewhere'
   },
   page: {
-    overview: 'Overview',
+    overview: {
+      name: 'Overview',
+      error: 'failed',
+      success: 'succeed',
+      pieTitle: 'execution result ratio',
+      lineTitle: 'execution result'
+    },
     namespace: {
       name: 'Namespace',
       tableColumns: {

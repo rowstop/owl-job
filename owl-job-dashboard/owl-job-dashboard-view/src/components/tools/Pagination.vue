@@ -28,7 +28,6 @@ const emits = defineEmits(['loadData'])
 watch(
   () => reload.value,
   ({ current, reload }) => {
-    console.log(`watch=> current:${current},reload:${reload}`)
     if (current != pageParam.value.current) {
       pageParam.value.current = current
       loaData(false, pageParam.value)
@@ -46,7 +45,6 @@ watch(
 onMounted(() => loaData(false, pageParam.value))
 
 function loaData(update: boolean, param: PageParam) {
-  console.log('loaData,loaData,loaData')
   resetLoaded()
   if (update) {
     pageParam.value = param

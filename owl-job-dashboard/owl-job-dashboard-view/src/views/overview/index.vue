@@ -1,4 +1,9 @@
 <script lang="ts" setup>
+import { onMounted, provide, reactive, ref, watch } from 'vue'
+import { count as getCount, namespace, type OverviewVO } from '@/api/overview'
+import i18n from '@/util/i18n'
+import { useI18nStore } from '@/stores/i18n'
+
 import Page from '@/components/container/Page.vue'
 import ECharts from 'vue-echarts'
 import { graphic, use } from 'echarts/core'
@@ -11,8 +16,6 @@ import {
   ToolboxComponent,
   TooltipComponent
 } from 'echarts/components'
-import { onMounted, provide, ref, watch } from 'vue'
-import { count as getCount, namespace, type OverviewVO } from '@/api/overview'
 
 use([
   CanvasRenderer,
@@ -26,6 +29,7 @@ use([
 ])
 
 provide(ECharts.THEME_KEY, 'dark')
+const i18nStore = useI18nStore()
 const curNamespace = ref()
 const namespaces = ref<string[]>([])
 const count = ref<OverviewVO>({
@@ -34,9 +38,9 @@ const count = ref<OverviewVO>({
   counts: []
 })
 
-const pieOption = ref({
+const pieOption = reactive({
   title: {
-    text: '运行结果比率',
+    text: i18n.global.t('page.overview.pieTitle'),
     left: 'center'
   },
   tooltip: {
@@ -46,7 +50,7 @@ const pieOption = ref({
   legend: {
     orient: 'vertical',
     left: 'left',
-    data: ['成功', '失败']
+    data: [i18n.global.t('page.overview.success'), i18n.global.t('page.overview.error')]
   },
   color: [
     new graphic.LinearGradient(0, 0, 0, 1, [
@@ -72,25 +76,25 @@ const pieOption = ref({
   ],
   series: [
     {
-      name: '运行结果比率',
+      name: i18n.global.t('page.overview.pieTitle'),
       type: 'pie',
       data: [
         {
-          name: '成功',
-          value: 335
+          name: i18n.global.t('page.overview.success'),
+          value: 0
         },
         {
-          name: '失败',
-          value: 310
+          name: i18n.global.t('page.overview.error'),
+          value: 0
         }
       ]
     }
   ]
 })
 
-const lineOption = ref({
+const lineOption = reactive({
   title: {
-    text: '运行结果',
+    text: i18n.global.t('page.overview.lineTitle'),
     left: '10'
   },
   tooltip: {
@@ -104,7 +108,7 @@ const lineOption = ref({
   },
   color: ['#00DDFF', '#FF0087'],
   legend: {
-    data: ['成功', '失败']
+    data: [i18n.global.t('page.overview.success'), i18n.global.t('page.overview.error')]
   },
   toolbox: {
     feature: {
@@ -131,7 +135,7 @@ const lineOption = ref({
   ],
   series: [
     {
-      name: '成功',
+      name: i18n.global.t('page.overview.success'),
       type: 'line',
       stack: 'Total',
       smooth: true,
@@ -155,10 +159,10 @@ const lineOption = ref({
       emphasis: {
         focus: 'series'
       },
-      data: [120, 282, 111, 234, 220, 340, 310]
+      data: [] as number[]
     },
     {
-      name: '失败',
+      name: i18n.global.t('page.overview.error'),
       type: 'line',
       stack: 'Total',
       smooth: true,
@@ -182,33 +186,45 @@ const lineOption = ref({
       emphasis: {
         focus: 'series'
       },
-      data: [220, 402, 231, 134, 190, 230, 120]
+      data: [] as number[]
     }
   ]
 })
 
 onMounted(() => {
   initNamespace()
-  initCount()
+  initCount(undefined)
 })
+
+watch(
+  () => i18nStore.lang,
+  () => {
+    pieOption.title.text = i18n.global.t('page.overview.pieTitle')
+    pieOption.legend.data = [
+      i18n.global.t('page.overview.success'),
+      i18n.global.t('page.overview.error')
+    ]
+    pieOption.series[0].name = i18n.global.t('page.overview.pieTitle')
+    pieOption.series[0].data[0].name = i18n.global.t('page.overview.success')
+    pieOption.series[0].data[1].name = i18n.global.t('page.overview.error')
+    lineOption.title.text = i18n.global.t('page.overview.lineTitle')
+    lineOption.legend.data = [
+      i18n.global.t('page.overview.success'),
+      i18n.global.t('page.overview.error')
+    ]
+    lineOption.series[0].name = i18n.global.t('page.overview.success')
+    lineOption.series[1].name = i18n.global.t('page.overview.error')
+  }
+)
 
 watch(
   () => count.value,
   (curCount) => {
-    pieOption.value.series[0].data = [
-      {
-        name: '成功',
-        value: curCount.success
-      },
-      {
-        name: '失败',
-        value: curCount.error
-      }
-    ]
-    const line = lineOption.value
-    line.xAxis[0].data = curCount.counts.map((ct) => ct.date)
-    line.series[0].data = curCount.counts.map((ct) => ct.success)
-    line.series[1].data = curCount.counts.map((ct) => ct.error)
+    pieOption.series[0].data[0].value = curCount.success
+    pieOption.series[0].data[1].value = curCount.error
+    lineOption.xAxis[0].data = curCount.counts.map((ct) => ct.date)
+    lineOption.series[0].data = curCount.counts.map((ct) => ct.success)
+    lineOption.series[1].data = curCount.counts.map((ct) => ct.error)
   }
 )
 
@@ -220,8 +236,8 @@ const initNamespace = () => {
   })
 }
 
-const initCount = () => {
-  getCount().then((result) => {
+const initCount = (namespace: string | undefined) => {
+  getCount({ namespace }).then((result) => {
     if (result.success) {
       count.value = result.data
     }
@@ -229,7 +245,7 @@ const initCount = () => {
 }
 
 const namespaceChange = (val: string) => {
-  console.log('namespace: ' + val)
+  initCount(val)
 }
 </script>
 
@@ -242,8 +258,13 @@ const namespaceChange = (val: string) => {
         <e-charts :option="pieOption" autoresize style="height: 500px" />
       </el-col>
       <el-col :span="12">
-        <el-form-item label="命名空间">
-          <el-select v-model="curNamespace" clearable placeholder="全部" @change="namespaceChange">
+        <el-form-item :label="$t('common.namespace')">
+          <el-select
+            v-model="curNamespace"
+            :placeholder="$t('common.all')"
+            clearable
+            @change="namespaceChange"
+          >
             <el-option
               v-for="namespace in namespaces"
               :key="namespace"
