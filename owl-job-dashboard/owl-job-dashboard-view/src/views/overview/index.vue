@@ -125,7 +125,7 @@ const lineOption = reactive({
     {
       type: 'category',
       boundaryGap: false,
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      data: [] as string[]
     }
   ],
   yAxis: [
@@ -278,9 +278,4 @@ const namespaceChange = (val: string) => {
   </page>
 </template>
 
-<style scoped>
-.ep-bg-purple {
-  height: 500px;
-  background-color: chartreuse;
-}
-</style>
+<style scoped></style>

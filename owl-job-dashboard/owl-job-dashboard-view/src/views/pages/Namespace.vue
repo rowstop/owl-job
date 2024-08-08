@@ -21,9 +21,14 @@ const groupDraw = reactive({
   } as Page<GroupVO>
 })
 
+const groupReload = reactive<PageReload>({
+  current: 1,
+  reload: false
+})
+
 watch(
   () => groupDraw.namespace,
-  (ns) => reloadGroup()
+  () => (groupReload.reload = true)
 )
 
 const reloadData = (pageParam: PageParam) => {
@@ -61,7 +66,7 @@ const reloadGroup = (pageParam: PageParam) => {
     direction="rtl"
     size="50%"
   >
-    <table-page :page="groupDraw.pageData" @load-data="reloadGroup">
+    <table-page v-model="groupReload" :page="groupDraw.pageData" @load-data="reloadGroup">
       <el-table-column :label="$t('page.namespace.group.name')" prop="name" />
     </table-page>
   </el-drawer>

@@ -20,7 +20,7 @@ const resolvers: Arrayable<Arrayable<Resolver>> | undefined = isDev
       })
     ]
 export default defineConfig({
-  base: '/owl/',
+  base: '/owl-job/',
   plugins: [
     vue(),
     // ...

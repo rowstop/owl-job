@@ -7,7 +7,8 @@ defineProps({
     type: String
   },
   icon: {
-    type: String
+    type: String,
+    required: true
   },
   link: {
     type: String

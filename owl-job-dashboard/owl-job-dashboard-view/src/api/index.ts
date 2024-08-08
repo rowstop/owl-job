@@ -18,9 +18,19 @@ export const request = async <T>(config: RequestConfig) => {
     headers: getHeaders(config),
     body: config.data ? JSON.stringify(config.data) : null
   }
-  const response = await fetch(url, init)
-  const resp = await response.json()
-  return handleResult(config, resp as Result<T>)
+  let response: Response | null = null
+  try {
+    response = await fetch(url, init)
+  } catch (reason) {
+    console.error(' fetch request error', reason)
+    throw new Error('fetch request error')
+  }
+  if (response.status !== 200) {
+    console.error(response)
+    throw new Error('fetch request error: ' + response.statusText)
+  }
+  const json = await response.json()
+  return handleResult(config, json as Result<T>)
 }
 
 /**

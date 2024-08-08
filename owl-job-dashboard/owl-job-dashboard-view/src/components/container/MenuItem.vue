@@ -10,7 +10,7 @@ defineProps({
 </script>
 
 <template>
-  <template v-for="menu in menus" :key="menu.index">
+  <template v-for="menu in menus" :key="menu.path">
     <el-sub-menu v-if="menu.children.length" :index="menu.path">
       <template #title>
         <el-icon>
