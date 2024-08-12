@@ -42,7 +42,7 @@ function reload(pageParam: PageParam) {
     if (groupPage.records.length) {
       group.value = groupPage.records[0].name
     } else {
-      group.value = null
+      group.value = undefined
     }
   })
 }
