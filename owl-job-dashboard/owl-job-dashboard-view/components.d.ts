@@ -58,5 +58,6 @@ declare module 'vue' {
     TablePage: typeof import('./src/components/container/TablePage.vue')['default']
     Task: typeof import('./src/components/icon/Task.vue')['default']
     TaskForm: typeof import('./src/components/task/TaskForm.vue')['default']
+    UserTool: typeof import('./src/components/container/header-tools/UserTool.vue')['default']
   }
 }

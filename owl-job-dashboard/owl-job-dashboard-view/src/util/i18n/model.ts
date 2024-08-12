@@ -3,6 +3,7 @@ interface I18NMSg extends Record<string, string | I18NMSg> {}
 export interface ILocal extends I18NMSg {
   common: {
     namespace: string
+    signOut: string
     all: string
   }
   login: {

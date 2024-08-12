@@ -3,6 +3,7 @@ import type { ILocal } from '../model'
 const en: ILocal = {
   common: {
     namespace: 'namespace',
+    signOut: 'sign out',
     all: 'all'
   },
   login: {

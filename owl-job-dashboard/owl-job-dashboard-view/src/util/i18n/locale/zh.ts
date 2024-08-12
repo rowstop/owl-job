@@ -3,6 +3,7 @@ import type { ILocal } from '../model'
 const zh: ILocal = {
   common: {
     namespace: '命名空间',
+    signOut: '退出',
     all: '全部'
   },
   login: {

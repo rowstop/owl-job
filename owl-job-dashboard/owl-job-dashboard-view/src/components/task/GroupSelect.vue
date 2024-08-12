@@ -27,6 +27,11 @@ watch(
   { immediate: true }
 )
 
+watch(
+  () => props.namespace,
+  () => reload({ size: 10, current: current.value })
+)
+
 function reload(pageParam: PageParam) {
   groupPage({ ...pageParam, namespace: props.namespace }).then((result) => {
     if (!result.success) {
@@ -36,6 +41,8 @@ function reload(pageParam: PageParam) {
     pageData.value = groupPage
     if (groupPage.records.length) {
       group.value = groupPage.records[0].name
+    } else {
+      group.value = null
     }
   })
 }
